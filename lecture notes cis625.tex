@@ -1,20 +1,36 @@
-\documentclass[12pt, letterpaper]{article} 
+\documentclass[12pt, letterpaper]{article}
+%\documentclass[12pt, letterpaper]{amsart}
 
 %%%%%%%%%%%% LANGUAGE & ENCODING %%%%%%%%%%%%%%%%%
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}%%%% to process umlauts and accents directly
-\nofiles
+%\usepackage{indentfirst}
+%\usepackage{ucs}
+
 %%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Hyperlinks
 \usepackage[colorlinks,linkcolor=cyan,citecolor=magenta]{hyperref}
-\usepackage{amsthm,amsmath,amsfonts,amssymb,esint}
-\usepackage[capitalize,nameinlink]{cleveref} %nice references
-\crefname{equation}{}{} %removes Eq. from equation references
-\usepackage{verbatim} %%% enables \begin{comment}    \end{comment}
-\usepackage{enumerate} % allows different types of indices
+
+% Common math packages
+\usepackage{amsthm, amsmath, amsfonts, amssymb, esint, mathrsfs, mathtools}
+\usepackage{tensor} % To handle multi-index notation
+\usepackage[capitalize,nameinlink]{cleveref} % Nice references
+\crefname{equation}{}{} % Removes Eq. from equation references
+\numberwithin{equation}{section} % Number equations within each section separately
+
+% Extra symbols
 \usepackage{stmaryrd} % contains \owedge  for Kulkarni-Nomizu product and some other special characters
 \usepackage{commath} % contains \norm \abs
 
-%\usepackage[scale = 0.8]{geometry}
+% Some useful packages
+\usepackage{verbatim} %%% enables \begin{comment}    \end{comment}
+\usepackage{enumerate} % allows different types of indices
+\usepackage{float} % Handling figures
+
+%%%%%%%%%%% MARGINS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Margins
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+
 %%%%%%%%%%% CUSTOM NOTATION  %%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -42,7 +58,6 @@
 \newcommand{\dd}{\; \mathrm{d}} %%%% d for integration dx
 \newcommand{\wt}{\widetilde}
 \newcommand{\ol}{\overline}
-\newcommand{\p}[1]{\left(#1\right)}
 
 %%%%%%%%%%% THEOREMS %%%%%%%%%%%%%%%%%%%%%%%%
 \newtheorem{theorem}{Theorem}[section]
@@ -62,26 +77,29 @@
 
 
 %%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
+%\title[CIS625: Computational Learning Theory]{Computational Learning Theory Lecture Notes}
+%\author[Notes by Martin Citoler-Saumell]{Martin Citoler-Saumell}
+%\date{Spring 2017}
+%\address{University of Pennsylvania\\ Philadelphia, PA 19104}
+%\email{\href{mailto:martinci@math.upenn.edu}{martinci@math.upenn.edu}}
+
 \title{Computational Learning Theory Lecture Notes}
 \author{Martin Citoler-Saumell}
-\date{CIS 625 Spring 2017}
+\date{CIS625 Spring 2017}
 
 %%%%%%%%%%% DOCUMENT BEGINS %%%%%%%%%%%%
 \begin{document}
 
 \maketitle
 
-\begin{itemize}
-	\item Instructor: \href{http://www.cis.upenn.edu/~mkearns/}{Prof. Michael Kearns}.
-\end{itemize}
-
+These are notes from \href{http://www.cis.upenn.edu/~mkearns/}{Prof. Michael Kearns}'s CIS625. This course is currently being taught at the University of Pennsylvania and attempts to provide algorithmic, complexity-theoretic and probabilistic foundations to modern machine learning and related topics. You can find out more at the \href{http://www.cis.upenn.edu/~mkearns/teaching/COLT/}{course website}. A word of caution, it is likely that some typos and/or errors have been introduced during the taking of these notes. If you find any, please let me know at \href{mailto:martinci@math.upenn.edu}{martinci@math.upenn.edu}.
 
 %------------------------------------------------------------
 %          LECTURE 1
 %------------------------------------------------------------
 \section{Lecture 1: 2017.01.23}
 
-\subsection{Outline/Description}
+\subsection{Course Outline/Description}
 
 \subsubsection{Formal Models of ML}
 
@@ -107,12 +125,7 @@
 
 \subsection{A Rectangle Learning Problem}
 
-Suppose you are trying to teach an alien friend the "shape" of humans in terms 
-of abstract descriptions like "medium build", "athletic", etc. 
-We are going to assume that each one of these descriptions represents a 
-rectangular region on the height-weight plane but we are not aware of the exact 
-dimensions. The only thing we are able to tell the alien is whether a 
-particular individual is medium built or not. i.e. we can only label examples.
+Suppose you are trying to teach an alien friend the "shape" of humans in terms of abstract descriptions like "medium build", "athletic", etc. We are going to assume that each one of these descriptions represents a rectangular region on the height-weight plane but we are not aware of the exact dimensions. The only thing we are able to tell the alien is whether a particular individual is medium built or not. i.e. we can only label examples.
 
 \begin{itemize}
 	\item \ul{target} rectangle $R$, the \emph{true} notion of "medium built".
@@ -120,14 +133,10 @@ particular individual is medium built or not. i.e. we can only label examples.
 \end{itemize}
 
 \begin{remark}
-	Note that the assumption that the classifier function is a rectangle is 
-	rather strong. There is always this trade-off to be able to actually compute things. From a Bayesian point of view, ``we always need a prior''.
+	Note that the assumption that the classifier function is a rectangle is rather strong. There is always this trade-off to be able to actually compute things. From a Bayesian point of view, ``we always need a prior''.
 \end{remark}
 
-Given a data cloud of examples, a reasonable hypothesis rectangle could be the 
-tightest fit rectangle. However, this choice ignores the negative examples so 
-it seems that that we are throwing away information. In a sense, this rectangle 
-would be the least likely.
+Given a data cloud of examples, a reasonable hypothesis rectangle could be the tightest fit rectangle. However, this choice ignores the negative examples so it seems that that we are throwing away information. In a sense, this rectangle would be the least likely.
 
 \begin{itemize}
 	\item Assume $\langle x_1,x_2 \rangle$ pairs of height-weight are i.i.d. from an arbitrary unknown probability distribution, $D$.
@@ -184,7 +193,7 @@ We want to be able to evaluate how our hypothesis rectangle is performing. We wa
 		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc 
 		C$ such that $D[h\triangle c]<\ve$, i. e.
 		\begin{align}
-    		Err(h) := \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
+    		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
 		\end{align}
 		\item (Efficient) $L$ runs in time/sample $poly\left(\frac1\ve, \frac1\delta, \textrm{dimension}\right)$.
 	\end{itemize}
@@ -212,15 +221,15 @@ In the following we are going to see an example of problem that is PAC learnable
 \begin{itemize}
     \item $X = \lbrace 0, 1 \rbrace^n$
     \item Class $\mc C = $ all conjunctions over $x_1,\ldots,x_n$. $\abs{\mc C} = 3^n$\\
-          E.g.: If $c = x_1\wedge \sim x_3 \wedge \sim x_{11} \wedge x_{26} \ldots$,
+          E.g.: If $c = x_1\wedge \lnot x_3 \wedge \lnot x_{11} \wedge x_{26} \ldots$,
           \begin{align}
-              c(\vec x) = 1 \impliedby\implies x_1 =1, x_3 = 0, x_{11} = 0, x_{26} = 1, \ldots
+              c(\vec x) = 1 \iff x_1 =1, x_3 = 0, x_{11} = 0, x_{26} = 1, \ldots
           \end{align}
     \item $D$ over $\lbrace 0, 1 \rbrace^n$.
 \end{itemize}
 
 
-\subsubsection{Algorithm for monotone case (i.e. no $\sim$'s)}
+\subsubsection[Algorithm for monotone case]{Algorithm for monotone case (i.e. no $\lnot$'s)}
 
 In this case we are trying to fit something like $c = x_1\wedge x_5 \wedge x_{13} \ldots$. i.e. given some examples of sequences of bits and the result of $c$ on them, we are trying to guess what the conjunction $c$ actually is. We can use the following algorithm:
 \begin{itemize}
@@ -253,7 +262,7 @@ If we want the right-hand-side of the last inequality to be less than some $\del
 \end{theorem}
 
 \begin{remark}
-    An analogous argument proves this theorem for conjunctions that are not necessarily monotone. The only difference is that we have to keep track the extra $\sim$ variables.
+    An analogous argument proves this theorem for conjunctions that are not necessarily monotone. The only difference is that we have to keep track the extra $\lnot$ variables.
 \end{remark}
 
 \begin{remark}
@@ -261,11 +270,53 @@ If we want the right-hand-side of the last inequality to be less than some $\del
 \end{remark}
 
 
+\subsection{Hardness of PAC learning 3-term DNF}
 
+Now we are going to see an example of non PAC learnable problem. However, we will be able to slightly modify it and achieve PAC learning. This motivates an better definition of PAC learnable.
+\begin{itemize}
+    \item Input space $X = \lbrace 0, 1 \rbrace^n$
+    \item Class $\mc C = $ all disjunctions of three conjunctions. $\abs{\mc C} = 3^{3n}$\\
+          E.g.: If $c = T_1 \lor T_2 \lor T_3$ where $T_i$ is a conjunction over $X$.\\
+          $c = \left(x_1 \wedge x_7 \wedge \lnot x_8 \right) \lor \left(x_2 \wedge x_5 \wedge \lnot x_7 \wedge \lnot x_8\right) \lor \left(x_6 \wedge x_{12}\right)$.
+\end{itemize}
+To see that this problem is \emph{hard}, we prove that the graph 3-coloring problem reduces to the 3-term DNF problem. 
 
+\subsubsection*{Graph 3-coloring to PAC learning 3-term DNF}
 
+Suppose that you have a 3-colorable (undirected) graph $G$. That is, a graph such that we can color the vertices with 3 colors in such a way that there are no edges between vertices of the same color. We see an example of how to transform such a graph into a set of labeled examples for the PAC learning 3-term DNF. 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.3\linewidth]{img/graph}
+\caption{A graph with a 3-coloring.}
+\label{fig:graph}
+\end{figure}
+First, for the $i$-th node we create a positive example that is represented by the vector, $v(i)$, with a 0 in the $i$-th entry and 1's everywhere else. E.g. from node one we have $\langle 011111, + \rangle$.
+Then we create a negative example from each edge that is represented by a vector, $e(i,j)$, of 1's except for 0's at the positions that determine the edge. E.g. from the edge connecting 2 and 3 we obtain $\langle 100111, - \rangle$. Next, the coloring can be used to define a 3-term DNF in the following way. Given a color, we define $T_{color}$ as the conjunction of the variables/vertices that are \emph{not} of that color. In this example we have
+\begin{align}
+    T_R = x_2 \wedge x_3 \wedge x_4 \wedge x_5,\\
+    T_B = x_1 \wedge x_3 \wedge x_6,\\
+    T_Y = x_1 \wedge x_2 \wedge x_4 \land x_5 \land x_6 .
+\end{align}
 
+\begin{claim}
+    $G$ is 3-colorable $\iff$ there is a 3-term DNF \emph{consistent} with the labeled sample above.
+\end{claim}
+\begin{proof}
+    We have just seen how to obtain a 3-term DNF from a 3-colorable graph. We only need to check that it is consistent with the sample. By construction, all the positive examples satisfy $T_{color}$ where color is the vertex's color, since the only 0 in the vector is in the position that is dropped. Similarly, it follows that the examples coming from the edges do not satisfy any of the $T$'s. In any edge there are two colors corresponding to its vertices. The extra 0 in the example ensures that the $T$'s from those colors are not satisfied. Finally, the $T$ of the remaining color cannot be satisfied because both vertices are included in the conjunction and they are both 0 in the example.
+    
+    Conversely, given a graph and the labeled examples as above, if there is a consistent 3-term DNF we can find a coloring in the following way. Label each term of the formula with a color, say $T_R \lor T_Y \lor T_B$, and remember the order of the labels. Then, we define the color of vertex $i$ (corresponding to vector $1\ldots101\ldots1$) as the label of the first formula that is satisfied by $v(i)$. Since the formula is consistent with the sample, every vertex must be actually colored. We only need to argue that this is a valid coloring. Suppose to the contrary that $i$ and $j$ are to vertices that are connected by an edge and have the same color. This means that both $v(i)$ and $v(j)$ satisfy $T_{C_0}$. However, we also have $v(i) \& v(j) = e(i,j)$  where $\&$ denotes the bit-wise and operation and it follows that $e(i,j)$ satisfies $T_{C_0}$, a contradiction with the consistency of the formula since edges are negative examples.
+\end{proof}
 
+This concludes the argument that finding a coloring of a graph is the same as producing a consistent 3-term DNF. We are only left with the computational aspects. Namely, given the labeled sample associated to a graph, we need to find a way to feed it to a PAC learning algorithm. First we need a distribution over vectors of bits. For this we can just sample the examples uniformly. Finally, to ensure consistency we choose $\ve$ any quantity less than $\frac1{\#examples}$. This way the algorithm cannot make any mistakes is forced to be consistent. In conclusion, if the 3-term DNF problem were PAC learnable, we could solve the coloring problem in random polynomial time. Another way to say this is in the form of the following theorem.
 
+\begin{theorem}
+    If 3-term DNF are PAC learnable, then $NP = RP$.
+\end{theorem}
+
+Of course, it is strongly believed that $RP \subsetneq NP$ so this is rather strong evidence against the easiness of the 3-term DNF problem.
+
+\begin{remark}
+    The upshot is that a slight generalization of the conjunction problem, for which we have a randomized polynomial time solution, is almost assured to not be PAC learnable ( unless NP = RP)
+\end{remark}
 
 \end{document}
