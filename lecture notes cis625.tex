@@ -1,0 +1,271 @@
+\documentclass[12pt, letterpaper]{article} 
+
+%%%%%%%%%%%% LANGUAGE & ENCODING %%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}%%%% to process umlauts and accents directly
+\nofiles
+%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[colorlinks,linkcolor=cyan,citecolor=magenta]{hyperref}
+\usepackage{amsthm,amsmath,amsfonts,amssymb,esint}
+\usepackage[capitalize,nameinlink]{cleveref} %nice references
+\crefname{equation}{}{} %removes Eq. from equation references
+\usepackage{verbatim} %%% enables \begin{comment}    \end{comment}
+\usepackage{enumerate} % allows different types of indices
+\usepackage{stmaryrd} % contains \owedge  for Kulkarni-Nomizu product and some other special characters
+\usepackage{commath} % contains \norm \abs
+
+%\usepackage[scale = 0.8]{geometry}
+%%%%%%%%%%% CUSTOM NOTATION  %%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+
+\newcommand{\f}{\mathfrak}
+\newcommand{\ul}{\underline}
+\newcommand{\mb}{\mathbb}
+\newcommand{\mr}{\mathrm}
+\newcommand{\mf}{\mathbf}
+\newcommand{\mc}{\mathcal}
+\newcommand{\e}{\emph}
+\newcommand{\vp}{\varphi}
+\newcommand{\ve}{\varepsilon}
+
+\newcommand{\vol}{\operatorname{Vol}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\dv}{\operatorname{div}}
+\newcommand{\tr}{\operatorname{tr}}
+
+\newcommand{\dd}{\; \mathrm{d}} %%%% d for integration dx
+\newcommand{\wt}{\widetilde}
+\newcommand{\ol}{\overline}
+\newcommand{\p}[1]{\left(#1\right)}
+
+%%%%%%%%%%% THEOREMS %%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{remark}[theorem]{Remark}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{example}[theorem]{Example}
+
+
+%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
+\title{Computational Learning Theory Lecture Notes}
+\author{Martin Citoler-Saumell}
+\date{CIS 625 Spring 2017}
+
+%%%%%%%%%%% DOCUMENT BEGINS %%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{itemize}
+	\item Instructor: \href{http://www.cis.upenn.edu/~mkearns/}{Prof. Michael Kearns}.
+\end{itemize}
+
+
+%------------------------------------------------------------
+%          LECTURE 1
+%------------------------------------------------------------
+\section{Lecture 1: 2017.01.23}
+
+\subsection{Outline/Description}
+
+\subsubsection{Formal Models of ML}
+
+\begin{itemize}
+	\item Assumptions about data generation process.
+	\item Assumptions about what algorithms "knows".
+	\item Sources of info that the algorithms has
+	\item Criteria/objective of learning is.
+	\item Restrictions on algorithms.
+\end{itemize}
+	
+\subsubsection{Examples of Models}
+
+\begin{itemize}
+	\item "PAC" model (in first 1/2 of the term).
+	\item Statistical learning theory.
+	\item "no-regrets" learning models.
+	\item Reinforcement learning.
+	\item ML \& Differential privacy.
+	\item "Fairness" in ML
+\end{itemize}
+
+
+\subsection{A Rectangle Learning Problem}
+
+Suppose you are trying to teach an alien friend the "shape" of humans in terms 
+of abstract descriptions like "medium build", "athletic", etc. 
+We are going to assume that each one of these descriptions represents a 
+rectangular region on the height-weight plane but we are not aware of the exact 
+dimensions. The only thing we are able to tell the alien is whether a 
+particular individual is medium built or not. i.e. we can only label examples.
+
+\begin{itemize}
+	\item \ul{target} rectangle $R$, the \emph{true} notion of "medium built".
+	\item \ul{hypothesis} rectangle $\hat R$. 
+\end{itemize}
+
+\begin{remark}
+	Note that the assumption that the classifier function is a rectangle is 
+	rather strong. There is always this trade-off to be able to actually compute things. From a Bayesian point of view, ``we always need a prior''.
+\end{remark}
+
+Given a data cloud of examples, a reasonable hypothesis rectangle could be the 
+tightest fit rectangle. However, this choice ignores the negative examples so 
+it seems that that we are throwing away information. In a sense, this rectangle 
+would be the least likely.
+
+\begin{itemize}
+	\item Assume $\langle x_1,x_2 \rangle$ pairs of height-weight are i.i.d. from an arbitrary unknown probability distribution, $D$.
+\end{itemize}
+
+We want to be able to evaluate how our hypothesis rectangle is performing. We want bounds on the classification error, which can be thought as the size of the symmetric difference between $R$ and $\hat R$
+
+\begin{align*}
+	D[R\triangle \hat R] \equiv \mb P_D[R(\vec x) \ne \hat R(\vec x)].
+\end{align*}
+
+\begin{theorem}
+	Given $\ve,\delta >0$, there is some integer $N$ such that if we have more than $N$ training examples,\footnote{This the same as saying that sample size is at least $N$.} we have
+	\begin{align*}
+		D[R\triangle \hat R] \equiv \mb P_D[R(\vec x) \ne \hat R(\vec x)] < \ve,
+	\end{align*}
+	with probability at least $1-\delta$.
+\end{theorem}
+
+\begin{proof}
+	First of all, note that using tightest fit, the hypothesis rectangle is always contained inside the target rectangle. Now, for each side of the target rectangle we may draw inward strips in such a way that each strip has $\mb P_D[Strip] < \frac{\ve}{4}$. If the training set has a positive example in each of these four strips, then the inequality above is satisfied because the boundary of the hypothesis rectangle would be contained in the union of the strips. 
+	Next we need to deal with the required sample size to obtain this result with some certainty. Let $m$ denote the sample size, since the distribution is i.i.d., we have
+	\begin{align*}
+		\mb P_D[\textrm{miss a specific strip m times}] = \left(1-\frac{\ve}{4}\right)^m,\\
+		\mb P_D[\textrm{miss any of the strips m times}] \geq 4\left(1-\frac{\ve}{4}\right)^m.
+	\end{align*}
+	By the discussion above, the last inequality implies
+	\begin{align*}
+		\mb P_{D^m}[D[R\triangle\hat R]\geq \ve] \leq 4\left(1-\frac{\ve}{4}\right)^m,
+	\end{align*}
+	which can be chosen arbitrarily small for big enough $m$. One can obtain $N\geq \frac4\ve \ln\left(\frac4\delta\right)$.
+\end{proof}
+
+\begin{remark}
+	This proof generalizes to $d$-dimensional rectangles. We only need to replace 4 with $2d$, the number of $(d-1)$-faces.
+	We can also try to incorporate noisy data, where the labels have some probability of being wrong.
+\end{remark}
+
+
+\subsection{A More General Model}
+
+\begin{itemize}
+	\item Input/instance/feature space, $X$. (e.g. $\R^2$ in the example above)
+	\item Concept/classifier/boolean function, $C: X \rightarrow \left\{0,1\right\}$ or we can also think about it as an indicator function of the positive examples or the subset of positive examples.
+	\item Concept class/target class, $\mc C \subset \mc P(X)$, the admissible concepts/classifiers. (e.g. all rectangles in $\R^2$ in the example above)
+	\item \ul{target} concept, $c\in\mc C$. (e.g. target rectangle in the example above)
+	\item Input distribution, $D$ over $X$ (arbitrary \& unknown)
+	\item Learning algorithm given access to examples of the form: $\langle \vec x,y \rangle$ where $\vec x$ is i.i.d. drawn from $D$ and $c(\vec x) = y$.
+\end{itemize}
+
+\begin{definition}[PAC Learning]
+	We say that a class of functions over $X$, $\mc C$, is \emph{Probably Approximately Correct (PAC) learnable} if there exists an algorithm, $L$, such that given any $c$ in $\mc C$, $D$ a distribution over $X$ and $\ve, \delta >0$, $L$ with these parameters and random inputs $\vec x$'s satisfies:  
+	\begin{itemize}
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc 
+		C$ such that $D[h\triangle c]<\ve$, i. e.
+		\begin{align}
+    		Err(h) := \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
+		\end{align}
+		\item (Efficient) $L$ runs in time/sample $poly\left(\frac1\ve, \frac1\delta, \textrm{dimension}\right)$.
+	\end{itemize}
+\end{definition}
+
+
+%------------------------------------------------------------
+%          LECTURE 2
+%------------------------------------------------------------
+\section{Lecture 2: 2017.01.30}
+
+\begin{remark}[PAC Learning]
+    Fixing the class $\mc C$ is a strong assumption, it is the prior you are assuming about the true behavior of the data. For example, when you fit a linear regression, you are assuming that there is a true linear relation in the data.
+    
+    In contrast, the assumption on the distribution over $X$ is fairly general.
+\end{remark}
+
+\begin{theorem}
+    The class of rectangles over $\R^2$ from example above is PAC learnable (with sample size $m\sim\frac1\ve\ln\left(\frac1\delta\right)$).
+\end{theorem}
+
+\subsection{PAC learning boolean conjunctions}
+
+In the following we are going to see an example of problem that is PAC learnable.
+\begin{itemize}
+    \item $X = \lbrace 0, 1 \rbrace^n$
+    \item Class $\mc C = $ all conjunctions over $x_1,\ldots,x_n$. $\abs{\mc C} = 3^n$\\
+          E.g.: If $c = x_1\wedge \sim x_3 \wedge \sim x_{11} \wedge x_{26} \ldots$,
+          \begin{align}
+              c(\vec x) = 1 \impliedby\implies x_1 =1, x_3 = 0, x_{11} = 0, x_{26} = 1, \ldots
+          \end{align}
+    \item $D$ over $\lbrace 0, 1 \rbrace^n$.
+\end{itemize}
+
+
+\subsubsection{Algorithm for monotone case (i.e. no $\sim$'s)}
+
+In this case we are trying to fit something like $c = x_1\wedge x_5 \wedge x_{13} \ldots$. i.e. given some examples of sequences of bits and the result of $c$ on them, we are trying to guess what the conjunction $c$ actually is. We can use the following algorithm:
+\begin{itemize}
+    \item $h \leftarrow x_1\wedge x_2 \wedge x_3\wedge \ldots \wedge x_n$, start with the conjunction of all the variables.
+    \item For each positive example, $\langle \vec x, 1 \rangle$, delete any variable in $h$ such that $x_i=0$.\\
+    This method ensures that the positives of $h$ is a subset of the true $c$.
+\end{itemize}
+
+
+\subsubsection*{Analysis}
+
+Let $p_i$ denote the probability we delete $x_i$ from $h$ in a single draw. In other words,
+\begin{align}
+    p_i = \mb P_{\bar X\sim D}[c(\vec x) = 1, x_i=0].
+\end{align}
+Then we have an a priori bound on error: $Err(h) \leq \sum\limits_{x_i\in h} p_i$. We can make a distinction between \emph{bad} and \emph{good} indices. An index, $i$, is bad if $p_i\geq \frac{\ve}{n}$ and good otherwise. Note that if $h$ contains no bad indices, then we have
+\begin{align}
+    Err(h) \leq \sum\limits_{x_i\in h} p_i \leq n\left(\frac{\ve}{n}\right).
+\end{align}
+Let's fix some index, $i$, such that $p_i\geq \frac\ve n$. i.e. a bad index. We have that
+\begin{align}
+    \mb P[x_i\textrm{ "survives" m random samples}] &= (1 - p_i)^m \quad (iid)\\
+    & \leq \left(1 - \frac\ve n\right)^m \\
+    \mb P[\textrm{\emph{any} bad i "survives" m random samples}] &\leq n\left(1 - \frac\ve n\right)^m.
+\end{align}
+If we want the right-hand-side of the last inequality to be less than some $\delta>0$, we end up with $m \geq \frac n\ve \ln\left(\frac n\delta\right)$. In other words, we just proved the following theorem
+
+\begin{theorem}
+    Conjunctions over $\lbrace 0,1 \rbrace^n$ are PAC learnable with sample size  $m \geq \frac n\ve \ln\left(\frac n\delta\right)$.
+\end{theorem}
+
+\begin{remark}
+    An analogous argument proves this theorem for conjunctions that are not necessarily monotone. The only difference is that we have to keep track the extra $\sim$ variables.
+\end{remark}
+
+\begin{remark}
+    We can identify some pattern for this kind of analysis. We identify some ``bad'' things that may happen and then prove that the probability of them happening decreases fast when we increase the number of samples seen.
+\end{remark}
+
+
+
+
+
+
+
+
+
+\end{document}
