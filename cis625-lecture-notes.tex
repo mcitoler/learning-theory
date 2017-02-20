@@ -67,14 +67,14 @@
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{claim}[theorem]{Claim}
 \newtheorem{problem}[theorem]{Problem}
-\newtheorem{remark}[theorem]{Remark}
+
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
-
-\theoremstyle{remark}
 \newtheorem{example}[theorem]{Example}
 
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
 
 %%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
 %\title[CIS625: Computational Learning Theory]{Computational Learning Theory Lecture Notes}
@@ -464,18 +464,292 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
     \item Class $\mc H$ over $X$.
     \item $h\in \mc H$ as functions $h(x)\in \lbrace0,1\rbrace$; or as sets $h\subset X$.
     \item Let $S=\lbrace x_1,\ldots,x_m\rbrace$ be an \ul{ordered} subset of $X$.
-    \item $\Pi_{\mc H}(S) = \left\{\langle h(x_1),\ldots,h(x_n)\rangle:h\in\mc H\right\} \subseteq \lbrace0,1\rbrace^m$
+    \item $\Pi_{\mc H}(S) = \left\{\langle h(x_1),\ldots,h(x_n)\rangle:h\in\mc H\right\} \subseteq \lbrace0,1\rbrace^m,\quad\abs{\Pi_{\mc H}(S)}\leq 2^m$.
     \begin{remark}
         If the inclusion above is saturated then it means that our hypothesis can classify ANY labeling of that size. That is bad for learning because it is saying that there is no structure in the data.
     \end{remark}
-    \item {\bf [Definition]} We say that $S$ is \emph{shattered} if the the equality case holds, $\Pi_{\mc H}(S) = \lbrace 0, 1\rbrace^m$, or equivalently, $\abs{\Pi_{\mc H}(S)} = 2^m$.
-    \item {\bf [Definition]} The Vapnik-Chervonenkis dimension of $\mc H$ as
-            \begin{align}
-                VCD(\mc H) &= \textrm{ size of the \ul{largest} shattered set}\\
-                             &= \max\limits_d\left\{\exists S\subseteq X:\;\abs{S}=d\quad\&\quad\Pi_{\mc H}(S) = \lbrace 0,1\rbrace^d\right\}
-            \end{align}
-    \paragraph{Example.} If $\mc H$ is finite, then $VCD(\mc C)\leq \ln\abs{\mc C}$ because shattered $d$ points requires $2^d$ functions.
+    \begin{remark}
+        For each variable in $S$, say $x_i$, it induces a partition on the class $\mc H$ according on what is the value of $h(x_i)$ for $h \in \mc H$. Then, one can think about $\Pi_{\mc H}(S)$ as the collection of all the the possible labelings with concepts in the class $\mc H$. 
+    \end{remark}
+\end{itemize}    
+\begin{definition}
+    We say that \emph{$S$ is shattered} if the the equality case holds, $\Pi_{\mc H}(S) = \lbrace 0, 1\rbrace^m$, or equivalently, $\abs{\Pi_{\mc H}(S)} = 2^m$.
+\end{definition}
+\begin{definition}
+    The \emph{Vapnik-Chervonenkis dimension of $\mc H$} as
+    \begin{align}
+        VCD(\mc H) &= \textrm{ size of the \ul{largest} shattered set}\\
+        &= \max\limits_d\left\{\exists S\subseteq X:\;\abs{S}=d\quad\&\quad\Pi_{\mc H}(S) = \lbrace 0,1\rbrace^d\right\}.
+    \end{align}
+\end{definition}
+
+\begin{example}
+    If $\mc H$ is finite, then $VCD(\mc C)\leq \ln\abs{\mc C}$ because shattered $d$ points requires $2^d$ functions. Equivalently, if $VCD(\mc C) = d$, then we must have $\abs{\mc C} \geq 2^d$.
+\end{example} 
     
-    \paragraph{Rectangles in $\R^2$.} The VCD dimension is $4$ in this case because the rectangular convex hull of a set of points is always given by the four extremal points in each direction.
+\begin{example}[Rectangles in $\R^2$]
+    The VCD dimension is $4$ in this case because the rectangular convex hull of a set of points is always given by the four extremal points in each direction. So there are always impossible labelings with 5 points. In general, the same kind of argument shows that the VCD dimension is $2d$.
+\end{example}
+
+
+%------------------------------------------------------------
+%          LECTURE 4
+%------------------------------------------------------------
+\section{Lecture 4: 2017.02.13}
+
+\begin{example}[Hyperplanes in $\R^2$]
+    It is clear that the VCD is at least 3 because given three points, we can always choose a line that separates the points in any way we want. In fact, the VCD is exactly 3.
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{img/hyperplanes.png}
+    \end{figure}
+    In general, for hyperplanes in $\R^d$ the VCD dimension is $d+1$.
+\end{example}
+
+\begin{example}[Convex n-gons in $\R^2$]
+    In this case, $VCD = 2n+1$. For example, if $n=4$, $VCD = 9$.
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{img/4-gons.png}
+    \end{figure}
+\end{example}
+
+\begin{remark}
+    Note that in these geometric situations, the VCD dimension is linearly related to the free parameters in our model. This is generally true (more or less). This supports the idea that we need more samples than parameters to be able to start learning something significant.
+\end{remark}
+
+\begin{remark}[Monotone conjunctions over $\lbrace 0,1 \rbrace^m$ e.g. $x_1\land x_5\land x_7$]
+    We claim that $VCD \geq n$. Indeed, consider the bit vectors: $\langle01\ldots 1\rangle, \langle 101\ldots 1\rangle, \ldots, \langle1\ldots 10\rangle$. We can always find a conjunction with the desired label. Namely, $x_1\land\ldots \land x_i^\lor\land\ldots\land x_n$ or its negation as needed.
+\end{remark}
+
+\subsubsection*{Overloaded Notation}
+\begin{align}
+    \Pi_{\mc C}(m) &\coloneqq \max\limits_{S\;:\;\abs{S}= m}\left\{\abs{\Pi_{\mc C}(S)}\right\}\\
+    &= \textrm{max. \# of labelings induced by $\mc C$ on m points.}
+\end{align}
+Note that we have the following:
+\begin{itemize}
+    \item  $\Pi_{\mc C}(m)\leq 2^m$.
+    \item If $m\leq VCD(\mc C)$, $\Pi_{\mc C}(m)=2^m$. 
+    \item If  $m > VCD(\mc C)$, $\Pi_{\mc C}(m) < 2^m$.
+\end{itemize} 
+
+\begin{theorem}\label{main thm lecture 4}
+    Let $VCD(\mc C)=d$. Then $\Pi_{\mc C}(m) = O(m^d)$.
+\end{theorem}
+
+\begin{remark}
+    As the sample size becomes large compared to the dimension, the growth rate of $\Pi_{\mc C}(m)$ is sub-exponential. In fact, the fraction of possible behaviors grows like $\frac{\frac1{m^d}}{2^m}$ which tends to 0 as $m\to\infty$.
+\end{remark}
+
+\subsubsection*{Proof of \cref{main thm lecture 4}}
+Consider $\phi_d(m) \coloneqq \phi_d(m-1) + \phi_{d-1}(m-1)$ with boundary conditions $\phi_0(m)=\phi_d(0)=1$.  We first prove the following lemma.
+\begin{lemma}
+    If $VCD(\mc C)= d$, then for any m we have $\Pi_{\mc C}(m) \leq \phi_d(m)$.
+\end{lemma}
+\begin{proof}
+   We use a double induction argument. The base cases are clear so assume the lemma is true for any $d'\leq d$ and $m'\leq m$ with at least one the inequalities being $<$. Consider the set $S=\lbrace x_1,\ldots,x_m\rbrace$. Recall that $\Pi_{\mc C}(S)$ is just the possible labelings of $S$ that can be realized with concepts in $\mc C$. Now consider all the possible labelings that are possible for $\lbrace x_1,\ldots,x_{m-1}\rbrace = S\setminus \lbrace x_m\rbrace$. For each of these, there are exactly 2 potential labelings for $S$ depending on whether $x_m = 0$ or $x_m = 1$. Then, by the induction hypothesis, we have
+   \begin{align}
+   \abs{\Pi_{\mc C}(S\setminus\{x_m\})} \leq \Pi_{\mc C}(m-1) \leq \phi_d(m-1).
+   \end{align}
+   Next consider the labelings of $S\setminus \lbrace x_m\rbrace$ that appear twice in the labelings of $S$. That is, those such that both $x_m = 0$ and $x_m = 1$ are possible labelings. Then we can shatter at most $d-1$ points with $S\setminus \lbrace x_m\rbrace$ because otherwise we would violate $VCD(\mc C) = d$. Finally, by induction hypothesis we have that
+   \begin{align}
+        \textrm{\# of labelings of $S\setminus \lbrace x_m\rbrace$ }\leq \phi_{d-1}(m-1).
+   \end{align}
+   Combining these two bound we obtain the result.
+\end{proof}
+
+\begin{claim}
+    $\phi_d(m) = \sum\limits_{i=0}^d\binom{m}{i}$.
+\end{claim}
+\begin{proof}
+    By induction,
+    \begin{align}
+        \phi_d(m) &= \phi_d(m-1) + \phi_{d-1}(m-1) = \sum\limits_{i=0}^d\binom{m-1}{i} + \sum\limits_{i=0}^{d-1}\binom{m-1}{i}\\
+        &= \sum\limits_{i=0}^d\binom{m-1}{i} + \sum\limits_{i=0}^{d}\binom{m-1}{i-1}\\
+        &= \sum\limits_{i=0}^d\left[\binom{m-1}{i} + \binom{m-1}{i}\right] = \sum\limits_{i=0}^d\binom{m}{i}.
+    \end{align}
+\end{proof}
+
+Now the proof of \cref{main thm lecture 4} follows by noting that $\sum\limits_{i=0}^d\binom{m}{i} = O(m^d)$.
+
+\subsection{Combinatorial $\rightarrow$ Probabilistic}
+Fix target $c\in\mc C$ and a distribution $D$. Thinking of $c$ as a set, we can consider $\mc H\triangle c = \lbrace h\triangle c : h\in\mc H \rbrace$, which are the \emph{error regions}.
+\begin{definition}
+ We say that $S$ of m points is a \emph{$\ve$-net} for $\mc H\triangle c$ if for all $r\in\mc H\triangle c$ such that $D[r]\geq \ve$, then we have $S\cap r \ne \emptyset$.
+\end{definition}
+\begin{remark}
+$VCD(\mc H\triangle c) = VCD(\mc H)$. This is because taking the symmetric difference corresponds to a XOR operation.
+\end{remark}
+Consider the auxiliary function on $S = \lbrace x_1,\ldots,x_m\rbrace$
+\begin{align}
+    A(S)&\coloneqq
+    \begin{cases}
+    1\quad\textrm{if $S$ is not an $\ve$-net for $\mc H\triangle c$}\\
+    0\quad\textrm{else}
+    \end{cases},\\
+    B\left(S, S'\right)&\coloneqq
+    \begin{cases}
+    1\quad\textrm{if $\exists r \in \mc H\triangle c$ st. $D[r]\geq\ve$, $r\cap S=\emptyset$, $\abs{r\cap S'}\geq \frac{\ve m}2$}\\
+    0\quad\textrm{else}
+    \end{cases}.
+\end{align}
+\begin{remark}
+    Event $B\left(S, S'\right)$ occurs if $\exists r \in \mc H\triangle c$ st. $r$ is ``hit'':
+    \begin{itemize}
+    \item $l \geq \frac{\ve m}2$ times in $S\cup S'$ but \emph{all} $l$ fall in $S'$.
+    \end{itemize}
+\end{remark}
+\begin{align}
+    \mb P_{S, S'}[B(S, S')] &= \mb P_{S, S'}[ B(S, S') \left|\right. A(S)] \cdot  \mb P_{S, S'}[A(S)]\\
+    &\geq \frac12  \mb P_{S, S'}[A(S)],
+\end{align}
+where we used Chebyshev's inequality on the last line.
+
+\paragraph{Draw $\langle S, S'\rangle$ of $2m$ points in 2 steps:}
+\begin{enumerate}
+\item Draw $2m$ points randomly from the distribution $D$. $x_1,\ldots, x_m, x_{m+1},\ldots, x_{2m}$
+\begin{enumerate}[-]
+\item \# possible labelings of the $2m$ points by $\mc H \triangle c$ fixed $\leq \phi_d(2m)$.
+\end{enumerate}
+\item Split the $2m$ points randomly into $S$ and $S'$.
+\end{enumerate}
+
+\begin{claim}
+$\mb P_{permutation}[B\left(S, S'\right)] = \frac{\binom{m}{l}}{\binom{2m}{l}}\leq 2^{-l}$.
+\end{claim}
+\begin{proof}
+    Simple exercise in combinatorics.
+\end{proof}
+Then we have that
+\begin{align}
+    \mb P[B\left(S, S'\right)] \leq \phi_d(2m)2^{-\frac{\ve m}2} \leq C_0 (2m)^d 2^{-\frac{\ve m}2} \leq e^{C_1[d\log(m)-\ve m]}.
+\end{align}
+We have just proven the following theorem.
+\begin{theorem}
+    As long as $m\geq C_2\left(\frac1\ve\log\left(\frac1\delta
+    \right) + \frac{d}\ve\log\left(\frac1\ve\right)\right)$, where $VCD(\mc H) = d$, we have that with probability $\geq 1-\delta$, any \emph{consistent} $h\in\mc H$ has error $\leq \ve$ with respect to $c$ and $D$.
+\end{theorem}
+
+
+%------------------------------------------------------------
+%          LECTURE 5
+%------------------------------------------------------------
+\section{Lecture 5: 2017.02.20}
+
+\paragraph{Outline for today:}
+\begin{enumerate}
+\item VC theory rcap
+\item Matching lower bound
+\item VC++:
+    \begin{itemize}
+    \item unrealizable/agnostic case
+    \item ERM/SRM
+    \item Rademacher complexity, sparsity, etc.
+    \item general loss functions
+    \end{itemize}
+\item Learning with noise
+\end{enumerate}
+
+\subsection{VC theory review}
+Recall from last time that we defined $\Pi_{\mc C}(m)$ as the max. \# of labelings induced by $\mc C$ on m points, by definition we have the naive bound $\Pi_{\mc C}(m)\leq 2^m$. One of the highlights is that we were able to prove that
+\begin{align}
+ \Pi_{\mc C}(m) \leq \phi_d(m) \leq O(m^d).
+\end{align}
+This bound is saying that past the VCD dimension, the number of possible labelings we can achieve is only a increasingly small fraction of the total number ($2^m$). This was the key step to prove the following theorem
+\begin{theorem}
+    Given $c\in\mc C$ and a distribution, $D$, over $X$. If we take $m \geq c_0 \frac{d}\ve \ln \frac1\delta$ examples, where $VCD(\mc C)=d$, then, with probability $\geq 1-\delta$, any $h\in\mc C$ that is consistent with the sample has $Err(h)\leq \ve$.
+\end{theorem}
+\begin{remark}
+    This is a purely ``information theory'' statement, we are ignoring how hard is to actually find an appropriate $h$.
+\end{remark}
+
+\subsection{Matching lower bound}
+The converse of the theorem above is not true, in other words, we can find distributions such that is not necessary to take that many examples. For example, consider the case of the triangles in dimension 2 and a distribution that has support on a single point. This motivates the next result.
+
+\begin{theorem}
+    Given $\mc C$ with $VCD(\mc C)=d$, there exists $D$ a distribution over $X$ such that $\Omega(d/\ve)$ examples are required to learn with error $\leq \ve$.
+\end{theorem}
+\begin{proof}
+    Consider $\lbrace x_1,\ldots,x_d\rbrace$ a shattered set and let $D$ be the uniform distribution over this set. Now, since the set is shattered, we can choose a function $c_i\in \mc C$ with $i=1,\ldots,2^d$  for each of the possible labeling of these d points. Now we randomly choose the target concept, $c$, among these $c_i$. This is equivalent to flipping a fair coin d times to determine the labeling induced by $c$ on $S$.
+    
+    Now we let $L$ be any $PAC$ learning algorithm with the data above. Given error parameter $\ve \leq \frac18$ suppose we only draw $m < d$ examples. Say that the number of distinct points that we have seen is $m' \leq m$,  for the remaining of the points the problem is equivalent to predicting a fair coin toss. Therefore, the expected error on the whole sample is $\frac{\frac{d-m'}2}d = \frac{d-m'}{2d}.$ By \href{https://en.wikipedia.org/wiki/Markov's_inequality}{Chebyshev's inequality},
+    \begin{align}
+        \mb P\left(Error\geq \frac{d-m'}{4d}\right) \leq \frac12.
+    \end{align}
+    In particular, if $m=\frac d2$, the error is at least $\frac 18$ with probability at least $\frac 12$ and the algorithm fails the conclusion of the theorem when $c$ is chosen randomly. This implies that there exist some target $c$ on which $L$ fails, so we need at least $\Omega(d)$ sample complexity lower bound.
+    
+    Finally, to incorporate the $\ve$ onto the lower bound, we need only scale the distribution above. Modify $D$ so that  the point $x_1$ has  probability $1-8\ve$ and let the rest have probability $\frac{8\ve}{d-1}$. This results in needing to draw more points to be in the same set up as before. Details are left as exercise or can be checked on the textbook in page 63.
+\end{proof}
+\subsection{VC++}
+\subsubsection{Unrealizable/Agnostic setting}
+So far we have assumed that the the target $c\in\mc C$. That is, that the truth is perfectly represented by our chosen class. Now we drop this assumption. We have a \emph{hypothesis} class $\mc H$ but $c\not\in\mc H$, i.e. the target might not be representable by $\mc H$. The first thing we need to lower our expectations for learning.
+\begin{definition}
+    $h^*\coloneqq \mathop{argmin}\limits_{h\in\mc H}\left\{Err(h)\right\}$, where $Err(h) = \mb P_{X\sim D}[h(x)\ne c(x)]$. We also define $\ve^* = Err(h^8)=$ best possible error in $\mc H.$
+\end{definition}
+Let's set up some additional notation. Given $h\in \mc H$ and a labeled sample 
+\begin{align}
+    S=\lbrace \langle x_1, c(x_1)\rangle,\ldots,\langle x_m, c(x_m)\rangle\rbrace,
+\end{align}
+we have some different types of errors:
+\begin{itemize}
+\item $Err(h)$, the \emph{true error} as aboe
+\item $\widehat{Err}(h) = \frac1m \abs{\lbrace \langle x_i, y_i\rangle \in S \;:\;h(x_i)\ne y_i\rbrace}$, the \emph{empirical error}.
 \end{itemize}
+
+\begin{theorem}
+    Given any target $c$ (not necessarily in $\mc H$) and a distribution $D$ over $X$, if we take $m\geq c_0 \frac d{\ve^2}\ln \frac1\delta$ where $VCD(\mc H)=d$, then with probability $\geq 1-\delta$, for all $h\in\mc H$ we have \emph{uniform} convergence
+    \begin{align}
+        \abs{\widehat{Err}(h)-Err(h)} \leq \ve.
+    \end{align}
+\end{theorem}
+\begin{proof}
+    According to Prof. Kearns is a modification of the analogous result where $c\in\mc H$. He mentioned that some extra materials might be uploaded to the course website.
+\end{proof}
+\begin{remark}
+    To apply this theorem, in applications, we find/compute $\hat h^* = \mathop{argmin}\limits_{h\in\mc H}\left\{\widehat{Err}(h)\right\}$. By the theorem, we have
+    $ \abs{\widehat{Err}(\hat h^*)-Err(\hat h^*)} \leq \ve$ and  $\abs{\widehat{Err}(h^*)-Err(h^*)} \leq \ve$. This implies that,
+    \begin{align}
+        \abs{Err(\hat h^*) - Err(h^*)} \leq 3\ve.
+    \end{align}
+\end{remark}
+
+\subsubsection{Structural Risk Minimization}
+Fix some target $c$, a distribution $D$ and a sample of size m $S$.Suppose we have $\mc H_1 \subset \mc H_2 \subset \ldots \subset \mc H_d \subset \ldots$. For example, each hypothesis could be a neural network with an increasing number of hidden layers. Note that the VCD dimension can only increase along the nested sequence. For simplicity, let's assume that $VCD(\mc H_d) = d$. Define
+\begin{align}
+    Err(d) &\coloneqq \min\limits_{h \in \mc H_d}\lbrace Err(h) \rbrace \\
+    &=\textrm{ best true error in $\mc H_d$}.\\
+    \widehat{Err}(d) &\coloneqq \min\limits_{h \in \mc H_d}\lbrace \widehat{Err}(h) \rbrace \\
+        &=\textrm{ best empirica error on $S$ in $\mc H_d$}.
+\end{align}
+\begin{remark}
+    From the theorem above, $|Err(d)-\widehat{Err}(d)|\lesssim \sqrt{\frac dm}$
+\end{remark}
+
+If we use minimization of the empirical error as the criterion to choose our model, we might run into trouble in the form of overfitting. Basically, the empirical error can only decrease as the complexity of the model increases but it can deviate from the true error. Luckily for us, the theorem above gives a way to correct for this by instead finding
+\begin{align}
+    \min\limits_d\left\{\widehat{Err}(d) + \sqrt{\frac dm}\right\}.
+\end{align}
+
+\subsubsection{Refinements}
+In the theorem from last time, $\Pi_{\mc C}(S) \rightarrow \Pi_{\mc C}(m) \leq O(m^d)$. But if one is more careful in the proof, it is possible to arrive to a bound on $\mb E_{S\sim D, c}[\ln \abs{\Pi_{\mc C}(S)}]$ where $\abs{S}=m$, the \emph{VC entropy}. (cf. Book)
+
+\subsection{General loss functions}
+The assumptions are as follows:
+\begin{itemize}
+\item observations $z \sim D$ iid. E.g. $z = \langle x, y\rangle$ with $y\in\lbrace 0,1\rbrace$;  $z = \langle x, y\rangle$ with $y\in\R$; $z=x$.
+\item models $h\in\mc H$.
+\item $\R$-valued loss function, $L(h,z)$. E.g.
+    \begin{enumerate}
+    \item Classification: $L(h, \langle x,y \rangle) = 1$ if $h(x)\ne y$, or 0 otherwise.
+    \item Linear regression: $L(h, \langle x,y \rangle) = (h(x)-y)^2$
+    \item $L(h,x)= \ln \frac1{h(x)}$
+    \end{enumerate}
+     We'd like to minimize $\mb E_{z\sim D}[L(h,z)]$
+\end{itemize}
+\begin{remark}
+    Although we are not going to touch on that, there is a theorem like the one we proved for this setting as well.
+\end{remark}
+\subsubsection{Analog to VCD}
+Take d observations $z_1,\ldots,z_d$ and consider the following set $T=\lbrace\langle L(h, z_1),\ldots,L(h,z_d)\rangle:h\in\mc H\rbrace$. The analog to the VC dimension would be to look at this cloud of points a see if it is ``space-filling'' or that not all points lie on some lower dimensional subspace. The criterion is that you want all the $d$-dimensional orthants to be intersected by $T$.
 \end{document}
