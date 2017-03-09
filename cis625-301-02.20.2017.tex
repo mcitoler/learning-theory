@@ -1,0 +1,214 @@
+\documentclass[12pt, letterpaper]{article}
+%\documentclass[12pt, letterpaper]{amsart}
+
+%%%%%%%%%%%% LANGUAGE & ENCODING %%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}%%%% to process umlauts and accents directly
+%\usepackage{indentfirst}
+%\usepackage{ucs}
+
+%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Hyperlinks
+\usepackage[colorlinks,linkcolor=cyan,citecolor=magenta]{hyperref}
+
+% Common math packages
+\usepackage{amsthm, amsmath, amsfonts, amssymb, esint, mathrsfs, mathtools}
+\usepackage{tensor} % To handle multi-index notation
+\usepackage[capitalize,nameinlink]{cleveref} % Nice references
+\crefname{equation}{}{} % Removes Eq. from equation references
+\numberwithin{equation}{section} % Number equations within each section separately
+
+% Extra symbols
+\usepackage{stmaryrd} % contains \owedge  for Kulkarni-Nomizu product and some other special characters
+\usepackage{commath} % contains \norm \abs
+
+% Some useful packages
+\usepackage{verbatim} %%% enables \begin{comment}    \end{comment}
+\usepackage{enumerate} % allows different types of indices
+\usepackage{float} % Handling figures
+
+%%%%%%%%%%% MARGINS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Margins
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+
+%%%%%%%%%%% CUSTOM NOTATION  %%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+
+\newcommand{\f}{\mathfrak}
+\newcommand{\ul}{\underline}
+\newcommand{\mb}{\mathbb}
+\newcommand{\mr}{\mathrm}
+\newcommand{\mf}{\mathbf}
+\newcommand{\mc}{\mathcal}
+\newcommand{\e}{\emph}
+\newcommand{\vp}{\varphi}
+\newcommand{\ve}{\varepsilon}
+
+\newcommand{\vol}{\operatorname{Vol}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\dv}{\operatorname{div}}
+\newcommand{\tr}{\operatorname{tr}}
+
+\newcommand{\dd}{\; \mathrm{d}} %%%% d for integration dx
+\newcommand{\wt}{\widetilde}
+\newcommand{\ol}{\overline}
+
+%%%%%%%%%%% THEOREMS %%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{remark}[theorem]{Remark}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{example}[theorem]{Example}
+
+
+%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
+%\title[CIS625: Computational Learning Theory]{Computational Learning Theory Lecture Notes}
+%\author[Notes by Martin Citoler-Saumell]{Martin Citoler-Saumell}
+%\date{Spring 2017}
+%\address{University of Pennsylvania\\ Philadelphia, PA 19104}
+%\email{\href{mailto:martinci@math.upenn.edu}{martinci@math.upenn.edu}}
+
+\title{Computational Learning Theory Lecture Notes}
+\author{Martin Citoler-Saumell}
+\date{CIS625 Spring 2017}
+
+%%%%%%%%%%% DOCUMENT BEGINS %%%%%%%%%%%%
+\begin{document}
+
+
+%------------------------------------------------------------
+%          LECTURE 5
+%------------------------------------------------------------
+\section{Lecture 5: 2017.02.20}
+
+\paragraph{Outline for today:}
+\begin{enumerate}
+\item VC theory rcap
+\item Matching lower bound
+\item VC++:
+    \begin{itemize}
+    \item unrealizable/agnostic case
+    \item ERM/SRM
+    \item Rademacher complexity, sparsity, etc.
+    \item general loss functions
+    \end{itemize}
+\item Learning with noise
+\end{enumerate}
+
+\subsection{VC theory review}
+Recall from last time that we defined $\Pi_{\mc C}(m)$ as the max. \# of labelings induced by $\mc C$ on m points, by definition we have the naive bound $\Pi_{\mc C}(m)\leq 2^m$. One of the highlights is that we were able to prove that
+\begin{align}
+ \Pi_{\mc C}(m) \leq \phi_d(m) \leq O(m^d).
+\end{align}
+This bound is saying that past the VCD dimension, the number of possible labelings we can achieve is only a increasingly small fraction of the total number ($2^m$). This was the key step to prove the following theorem
+\begin{theorem}
+    Given $c\in\mc C$ and a distribution, $D$, over $X$. If we take $m \geq c_0 \frac{d}\ve \ln \frac1\delta$ examples, where $VCD(\mc C)=d$, then, with probability $\geq 1-\delta$, any $h\in\mc C$ that is consistent with the sample has $Err(h)\leq \ve$.
+\end{theorem}
+\begin{remark}
+    This is a purely ``information theory'' statement, we are ignoring how hard is to actually find an appropriate $h$.
+\end{remark}
+
+\subsection{Matching lower bound}
+The converse of the theorem above is not true, in other words, we can find distributions such that is not necessary to take that many examples. For example, consider the case of the triangles in dimension 2 and a distribution that has support on a single point. This motivates the next result.
+
+\begin{theorem}
+    Given $\mc C$ with $VCD(\mc C)=d$, there exists $D$ a distribution over $X$ such that $\Omega(d/\ve)$ examples are required to learn with error $\leq \ve$.
+\end{theorem}
+\begin{proof}
+    Consider $\lbrace x_1,\ldots,x_d\rbrace$ a shattered set and let $D$ be the uniform distribution over this set. Now, since the set is shattered, we can choose a function $c_i\in \mc C$ with $i=1,\ldots,2^d$  for each of the possible labeling of these d points. Now we randomly choose the target concept, $c$, among these $c_i$. This is equivalent to flipping a fair coin d times to determine the labeling induced by $c$ on $S$.
+    
+    Now we let $L$ be any $PAC$ learning algorithm with the data above. Given error parameter $\ve \leq \frac18$ suppose we only draw $m < d$ examples. Say that the number of distinct points that we have seen is $m' \leq m$,  for the remaining of the points the problem is equivalent to predicting a fair coin toss. Therefore, the expected error on the whole sample is $\frac{\frac{d-m'}2}d = \frac{d-m'}{2d}.$ By \href{https://en.wikipedia.org/wiki/Markov's_inequality}{Chebyshev's inequality},
+    \begin{align}
+        \mb P\left(Error\geq \frac{d-m'}{4d}\right) \leq \frac12.
+    \end{align}
+    In particular, if $m=\frac d2$, the error is at least $\frac 18$ with probability at least $\frac 12$ and the algorithm fails the conclusion of the theorem when $c$ is chosen randomly. This implies that there exist some target $c$ on which $L$ fails, so we need at least $\Omega(d)$ sample complexity lower bound.
+    
+    Finally, to incorporate the $\ve$ onto the lower bound, we need only scale the distribution above. Modify $D$ so that  the point $x_1$ has  probability $1-8\ve$ and let the rest have probability $\frac{8\ve}{d-1}$. This results in needing to draw more points to be in the same set up as before. Details are left as exercise or can be checked on the textbook in page 63.
+\end{proof}
+\subsection{VC++}
+\subsubsection{Unrealizable/Agnostic setting}
+So far we have assumed that the the target $c\in\mc C$. That is, that the truth is perfectly represented by our chosen class. Now we drop this assumption. We have a \emph{hypothesis} class $\mc H$ but $c\not\in\mc H$, i.e. the target might not be representable by $\mc H$. The first thing we need to lower our expectations for learning.
+\begin{definition}
+    $h^*\coloneqq \mathop{argmin}\limits_{h\in\mc H}\left\{Err(h)\right\}$, where $Err(h) = \mb P_{X\sim D}[h(x)\ne c(x)]$. We also define $\ve^* = Err(h^8)=$ best possible error in $\mc H.$
+\end{definition}
+Let's set up some additional notation. Given $h\in \mc H$ and a labeled sample 
+\begin{align}
+    S=\lbrace \langle x_1, c(x_1)\rangle,\ldots,\langle x_m, c(x_m)\rangle\rbrace,
+\end{align}
+we have some different types of errors:
+\begin{itemize}
+\item $Err(h)$, the \emph{true error} as aboe
+\item $\widehat{Err}(h) = \frac1m \abs{\lbrace \langle x_i, y_i\rangle \in S \;:\;h(x_i)\ne y_i\rbrace}$, the \emph{empirical error}.
+\end{itemize}
+
+\begin{theorem}
+    Given any target $c$ (not necessarily in $\mc H$) and a distribution $D$ over $X$, if we take $m\geq c_0 \frac d{\ve^2}\ln \frac1\delta$ where $VCD(\mc H)=d$, then with probability $\geq 1-\delta$, for all $h\in\mc H$ we have \emph{uniform} convergence
+    \begin{align}
+        \abs{\widehat{Err}(h)-Err(h)} \leq \ve.
+    \end{align}
+\end{theorem}
+\begin{proof}
+    According to Prof. Kearns is a modification of the analogous result where $c\in\mc H$. He mentioned that some extra materials might be uploaded to the course website.
+\end{proof}
+\begin{remark}
+    To apply this theorem, in applications, we find/compute $\hat h^* = \mathop{argmin}\limits_{h\in\mc H}\left\{\widehat{Err}(h)\right\}$. By the theorem, we have
+    $ \abs{\widehat{Err}(\hat h^*)-Err(\hat h^*)} \leq \ve$ and  $\abs{\widehat{Err}(h^*)-Err(h^*)} \leq \ve$. This implies that,
+    \begin{align}
+        \abs{Err(\hat h^*) - Err(h^*)} \leq 3\ve.
+    \end{align}
+\end{remark}
+
+\subsubsection{Structural Risk Minimization}
+Fix some target $c$, a distribution $D$ and a sample of size m $S$.Suppose we have $\mc H_1 \subset \mc H_2 \subset \ldots \subset \mc H_d \subset \ldots$. For example, each hypothesis could be a neural network with an increasing number of hidden layers. Note that the VCD dimension can only increase along the nested sequence. For simplicity, let's assume that $VCD(\mc H_d) = d$. Define
+\begin{align}
+    Err(d) &\coloneqq \min\limits_{h \in \mc H_d}\lbrace Err(h) \rbrace \\
+    &=\textrm{ best true error in $\mc H_d$}.\\
+    \widehat{Err}(d) &\coloneqq \min\limits_{h \in \mc H_d}\lbrace \widehat{Err}(h) \rbrace \\
+        &=\textrm{ best empirica error on $S$ in $\mc H_d$}.
+\end{align}
+\begin{remark}
+    From the theorem above, $|Err(d)-\widehat{Err}(d)|\lesssim \sqrt{\frac dm}$
+\end{remark}
+
+If we use minimization of the empirical error as the criterion to choose our model, we might run into trouble in the form of overfitting. Basically, the empirical error can only decrease as the complexity of the model increases but it can deviate from the true error. Luckily for us, the theorem above gives a way to correct for this by instead finding
+\begin{align}
+    \min\limits_d\left\{\widehat{Err}(d) + \sqrt{\frac dm}\right\}.
+\end{align}
+
+\subsubsection{Refinements}
+In the theorem from last time, $\Pi_{\mc C}(S) \rightarrow \Pi_{\mc C}(m) \leq O(m^d)$. But if one is more careful in the proof, it is possible to arrive to a bound on $\mb E_{S\sim D, c}[\ln \abs{\Pi_{\mc C}(S)}]$ where $\abs{S}=m$, the \emph{VC entropy}. (cf. Book)
+
+\subsection{General loss functions}
+The assumptions are as follows:
+\begin{itemize}
+\item observations $z \sim D$ iid. E.g. $z = \langle x, y\rangle$ with $y\in\lbrace 0,1\rbrace$;  $z = \langle x, y\rangle$ with $y\in\R$; $z=x$.
+\item models $h\in\mc H$.
+\item $\R$-valued loss function, $L(h,z)$. E.g.
+    \begin{enumerate}
+    \item Classification: $L(h, \langle x,y \rangle) = 1$ if $h(x)\ne y$, or 0 otherwise.
+    \item Linear regression: $L(h, \langle x,y \rangle) = (h(x)-y)^2$
+    \item $L(h,x)= \ln \frac1{h(x)}$
+    \end{enumerate}
+     We'd like to minimize $\mb E_{z\sim D}[L(h,z)]$
+\end{itemize}
+\begin{remark}
+    Although we are not going to touch on that, there is a theorem like the one we proved for this setting as well.
+\end{remark}
+\subsubsection{Analog to VCD}
+Take d observations $z_1,\ldots,z_d$ and consider the following set $T=\lbrace\langle L(h, z_1),\ldots,L(h,z_d)\rangle:h\in\mc H\rbrace$. The analog to the VC dimension would be to look at this cloud of points a see if it is ``space-filling'' or that not all points lie on some lower dimensional subspace. The criterion is that you want all the $d$-dimensional orthants to be intersected by $T$.
+\end{document}

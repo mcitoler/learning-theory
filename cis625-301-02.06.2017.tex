@@ -1,0 +1,205 @@
+\documentclass[12pt, letterpaper]{article}
+%\documentclass[12pt, letterpaper]{amsart}
+
+%%%%%%%%%%%% LANGUAGE & ENCODING %%%%%%%%%%%%%%%%%
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}%%%% to process umlauts and accents directly
+%\usepackage{indentfirst}
+%\usepackage{ucs}
+
+%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For Hyperlinks
+\usepackage[colorlinks,linkcolor=cyan,citecolor=magenta]{hyperref}
+
+% Common math packages
+\usepackage{amsthm, amsmath, amsfonts, amssymb, esint, mathrsfs, mathtools}
+\usepackage{tensor} % To handle multi-index notation
+\usepackage[capitalize,nameinlink]{cleveref} % Nice references
+\crefname{equation}{}{} % Removes Eq. from equation references
+\numberwithin{equation}{section} % Number equations within each section separately
+
+% Extra symbols
+\usepackage{stmaryrd} % contains \owedge  for Kulkarni-Nomizu product and some other special characters
+\usepackage{commath} % contains \norm \abs
+
+% Some useful packages
+\usepackage{verbatim} %%% enables \begin{comment}    \end{comment}
+\usepackage{enumerate} % allows different types of indices
+\usepackage{float} % Handling figures
+
+%%%%%%%%%%% MARGINS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Margins
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+
+%%%%%%%%%%% CUSTOM NOTATION  %%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+
+\newcommand{\f}{\mathfrak}
+\newcommand{\ul}{\underline}
+\newcommand{\mb}{\mathbb}
+\newcommand{\mr}{\mathrm}
+\newcommand{\mf}{\mathbf}
+\newcommand{\mc}{\mathcal}
+\newcommand{\e}{\emph}
+\newcommand{\vp}{\varphi}
+\newcommand{\ve}{\varepsilon}
+
+\newcommand{\vol}{\operatorname{Vol}}
+\newcommand{\diam}{\operatorname{diam}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\dv}{\operatorname{div}}
+\newcommand{\tr}{\operatorname{tr}}
+
+\newcommand{\dd}{\; \mathrm{d}} %%%% d for integration dx
+\newcommand{\wt}{\widetilde}
+\newcommand{\ol}{\overline}
+
+%%%%%%%%%%% THEOREMS %%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{remark}[theorem]{Remark}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{example}[theorem]{Example}
+
+
+%%%%%%%%%%% TITLE %%%%%%%%%%%%%%%%%%%
+%\title[CIS625: Computational Learning Theory]{Computational Learning Theory Lecture Notes}
+%\author[Notes by Martin Citoler-Saumell]{Martin Citoler-Saumell}
+%\date{Spring 2017}
+%\address{University of Pennsylvania\\ Philadelphia, PA 19104}
+%\email{\href{mailto:martinci@math.upenn.edu}{martinci@math.upenn.edu}}
+
+\title{Computational Learning Theory Lecture Notes}
+\author{Martin Citoler-Saumell}
+\date{CIS625 Spring 2017}
+
+%%%%%%%%%%% DOCUMENT BEGINS %%%%%%%%%%%%
+\begin{document}
+
+%------------------------------------------------------------
+%          LECTURE 3
+%------------------------------------------------------------
+\section{Lecture 3: 2017.02.06}
+
+Recall the definition of a class being PAC learnable.
+\begin{definition}[PAC Learning]
+	A class $\mc C$ is \emph{Probably Approximately Correct (PAC) learnable} if there exists an algorithm, $L$, such that:
+	\begin{align}
+    	\forall c \in \mc C,\quad \forall D \textrm{ over }X,\quad \forall \ve,\delta > 0
+	\end{align} 
+	\begin{itemize}
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc 
+		C$ such that $D[h\triangle c]<\ve$, i.e. we have error at most $\ve$
+		\begin{align}
+    		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
+		\end{align}
+		\item (Efficient) $L$ runs in time/sample $poly\left(\frac1\ve, \frac1\delta, n\right)$. \emph{Samples} \& \emph{computation}.
+	\end{itemize}
+\end{definition}
+\begin{remark}
+    Usually when we talk about computation time we are in the realm of complexity theory and we talk about samples we are really asking statistics/information-theory questions about what sample size do we need to be able to draw some conclusion.
+\end{remark}
+
+\subsection{PAC learning 3-term DNF by 3-CNF}
+In the following we see how to overcome the intractability of the 3-DNF PAC learning by using a different representation. It amounts to expanding the input space and the class we are learning.
+
+\begin{definition}
+    A 3-CNF is a conjunction of disjunctions of length three.
+\end{definition}
+
+Given a 3-DNF, we can rewrite it as a 3-CNF in the following way:
+\begin{align}
+    T_1 \lor T_2 \lor T_3 \equiv \bigwedge\limits_{\stackrel{u\in T_1}{\stackrel{v\in T_2}{w\in T_3}}} \left(u \lor v \lor w\right),
+\end{align}
+for every assignment of $x_1,\ldots,x_n$, both sides evaluate to the same boolean value. Notice that the length of the 3-CNF can be much bigger (but still polynomial): 3-DNF is at most as $3n$ but 3-CNF could be up to $n^3$. In a sense, this corresponds to feature generation.
+\begin{remark}
+    Notice that the reverse is NOT true. Given a 3-CNF it might not be representable as a 3-DNF. 
+    
+    Another important point to notice is that after the transformation into 3-CNF we are changing the distribution of the initial input space. But the definition of PAC learnable allows for \emph{any} distribution, so we are fine.
+\end{remark}
+
+The upshot here is that we can learn 3-CNF by 3-CNF but this problem contains the intractable problem of learning 3-DNF by 3-DNF. The trick is that we have a bigger solution space so we the 3-CNF algorithm is fed a 3-DNF, it has the option to output something outside the 3-DNF class, namely a 3-CNF.
+
+\begin{theorem}
+    3-CNF is PAC-learnable and 3-DNF. Further, by the discussion above, 3-DNF is learnable ``by'' 3-CNF.
+\end{theorem}
+
+This motivates the more general definition for PAC-learnable that takes into account the solution class.
+\begin{definition}[PAC Learning]
+	A class $\mc C$ is \emph{Probably Approximately Correct (PAC) learnable} by $\mc C \subset \mc H$ if there exists an algorithm, $L$, such that:
+	\begin{align}
+    	\forall c \in \mc C,\quad \forall D \textrm{ over }X,\quad \forall \ve,\delta > 0
+	\end{align} 
+	\begin{itemize}
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $\ul{h\in\mc H}$ 
+		 such that $D[h\triangle c]<\ve$, i.e. we have error at most $\ve$
+		\begin{align}
+    		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
+		\end{align}
+		\item (Efficient) $L$ runs in time/sample $poly\left(\frac1\ve, \frac1\delta, n\right)$. \emph{Samples} \& \emph{computation}.
+	\end{itemize}
+\end{definition}
+\begin{remark}
+     $\mc C$ is usually called the target class and $\mc H$ the hypothesis class.
+\end{remark}
+
+
+\subsection{Consistency implies PAC-learnable}
+\begin{itemize}
+\item Suppose we have some target and hypothesis classes, $\mc C \subset \mc H$.
+\item Let $A$ be a \emph{consistent} algorithm:
+    \begin{enumerate}[i)]
+    \item Given \ul{any} finite sample, $S=\lbrace \langle x_1,y_1\rangle,\ldots,\langle x_m,y_m\rangle\rbrace$, where  for all $i$ we have $y_i = c(x_i)$ for some $c\in \mc C$.
+    \item $A$ outputs $h\in\mc H$ such that $h(x_i)=y_i=c(x_i)$ for all $i$.
+    \end{enumerate}
+\end{itemize}
+
+\begin{theorem}
+    For any finite $\mc H$, a  consistent algorithm  for $\mc H$ is a PAC-learnable algorithm.
+\end{theorem}
+\begin{proof}
+    We call a hypothesis, $h\in\mc H$, $\ve$-bad if $Err(h)>\ve$. Now we generate a size-$m$ $S$ according to $Ex(c, D)$, which is the subroutine that generates samples from $D$. For any \ul{fixed} $\ve$-bad $h$, we have an upper bound on the probability of $h$ being consistent with $S$
+    \begin{align}
+        \mb P_{S}[h\textrm{ consistent with }S] \leq (1-\ve)^m.
+    \end{align}
+    Therefore,  $\mb P_{S}[\exists h\in\mc H\textrm{ that is both $\ve$-bad and consistent with } S] \leq \abs{\mc H}(1-\ve)^m$. Now we choose $\delta > 0$ such that  $\abs{\mc H}(1-\ve)^m < \delta$. We can conclude that as long as $m \geq \frac{const}\ve \ln\frac{\abs{\mc H}}\delta$ the PAC learning definition will be satisfied.
+\end{proof}
+\begin{remark}
+    $\abs{\mc H}(1-\ve)^m \leq e^{ \ln\abs{\mc H} + m\ln(1-\ve)}\approx e^{\ln\abs{\mc H} - c_0\ve m} \to 0$ as $m\to\infty$. A key point of this is that we can let the complexity of the hypothesis to grow as the sample size gets bigger and keeping this quantity under control. That is, the more data you have, the more complex the model you can train without over-fitting too much. If $\mc H_m$ is the hypothesis for data of size $m$, we only need $\ln\abs{\mc H_m} \leq c \cdot m^\beta$, for some $\beta < 1$ and $c=c(dim)$. From here we obtain $ m \geq \left(\frac c\ve\right)^{\frac1{1-\beta}}$.
+\end{remark}
+
+Next we want to deal with the case of a possibly infinite hypothesis class $\mc H$. The first approach could be to try and force feed a discretization of the hypothesis into the finite case one but this might not work because it depends on the interaction between the distribution of the data and the chosen discretization. We want something better.
+
+\begin{itemize}
+    \item Class $\mc H$ over $X$.
+    \item $h\in \mc H$ as functions $h(x)\in \lbrace0,1\rbrace$; or as sets $h\subset X$.
+    \item Let $S=\lbrace x_1,\ldots,x_m\rbrace$ be an \ul{ordered} subset of $X$.
+    \item $\Pi_{\mc H}(S) = \left\{\langle h(x_1),\ldots,h(x_n)\rangle:h\in\mc H\right\} \subseteq \lbrace0,1\rbrace^m$
+    \begin{remark}
+        If the inclusion above is saturated then it means that our hypothesis can classify ANY labeling of that size. That is bad for learning because it is saying that there is no structure in the data.
+    \end{remark}
+    \item {\bf [Definition]} We say that $S$ is \emph{shattered} if the the equality case holds, $\Pi_{\mc H}(S) = \lbrace 0, 1\rbrace^m$, or equivalently, $\abs{\Pi_{\mc H}(S)} = 2^m$.
+    \item {\bf [Definition]} The Vapnik-Chervonenkis dimension of $\mc H$ as
+            \begin{align}
+                VCD(\mc H) &= \textrm{ size of the \ul{largest} shattered set}\\
+                             &= \max\limits_d\left\{\exists S\subseteq X:\;\abs{S}=d\quad\&\quad\Pi_{\mc H}(S) = \lbrace 0,1\rbrace^d\right\}
+            \end{align}
+    \paragraph{Example.} If $\mc H$ is finite, then $VCD(\mc C)\leq \ln\abs{\mc C}$ because shattered $d$ points requires $2^d$ functions.
+    
+    \paragraph{Rectangles in $\R^2$.} The VCD dimension is $4$ in this case because the rectangular convex hull of a set of points is always given by the four extremal points in each direction.
+\end{itemize}
+\end{document}
