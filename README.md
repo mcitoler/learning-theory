@@ -1,0 +1,3 @@
+# Computational Learning Theory (Penn CIS625)
+
+These are notes from [Prof. Michael Kearns](http://www.cis.upenn.edu/~mkearns/)' CIS625. This course is currently being taught at the University of Pennsylvania and  attempts to provide algorithmic, complexity-theoretic and probabilistic foundations to modern machine learning and related topics. You can find out more at the [course website](http://www.cis.upenn.edu/~mkearns/teaching/COLT/). A word of caution, it is likely that some typos and/or errors have been introduced during the taking of these notes. If you find any, please let me know at [martinci@math.upenn.edu](mailto:martinci@math.upenn.edu).
