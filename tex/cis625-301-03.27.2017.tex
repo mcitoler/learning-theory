@@ -115,7 +115,7 @@ Adaboost provides a sort of converse to the following result: ``hypothesis compr
 In essence, it is PAC-learning with a membership query oracle. This gives the algorithm to create ``synthetic'' examples and ask for the true labels. This assumes that there is an underlying ground truth, which might not be true in practice.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-mq.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-mq.png}
 \caption{PAC with membership queries.}
 \end{figure}
 \begin{remark}
@@ -125,7 +125,7 @@ On the surface, adding these membership queries are adding some power to the alg
 Now consider the following learning model where we have membership queries of individual inputs and an equivalence query oracle that answers whether an hypothesis is the same as the target class (as functions), $c$, and gives \emph{some} counterexample if appropriate i.e. some input where they disagree.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-mq-eq.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-mq-eq.png}
 \caption{Exact learning with membership and equivalence queries.}
 \end{figure}
 
@@ -142,7 +142,7 @@ First of all, recall that PAC-learning DFAs\footnote{Deterministic Finite Automa
 Consider $X=\lbrace 0, 1\rbrace^*$ with labels $\lbrace +, -\rbrace$. i.e. arbitrary length strings of 1s and 0s. The goal is to learn in poly(size(c), longest counterexample).
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/dfa.png}
+\includegraphics[width=0.6\linewidth]{../img/dfa.png}
 \caption{Example of DFA.}
 \end{figure}
 This function is actually $M(x) = +$ if and only if the \#1s in $x$ is $\equiv 3 \mod 4$.
@@ -152,7 +152,7 @@ This function is actually $M(x) = +$ if and only if the \#1s in $x$ is $\equiv 3
 To be able to learn DFAs we use a binary tree satisfying the following properties.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/dfa-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/dfa-tree.png}
 \caption{Classification tree.}
 \end{figure}
 \begin{itemize}
@@ -168,7 +168,7 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/dfa-to-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/dfa-to-tree.png}
 \caption{Classification tree for the example above.}
 \end{figure}
 
@@ -178,13 +178,13 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
 \item EQ on the trivial machine: 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.1\linewidth]{img/trivial-dfa.png}
+\includegraphics[width=0.1\linewidth]{../img/trivial-dfa.png}
 \caption{Trivial DFA.}
 \end{figure}
     If the machine is not trivial, we obtain a counterexample string, $\langle s, -\rangle$, and we can initialize the tree.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.1\linewidth]{img/initial-tree.png}
+    \includegraphics[width=0.1\linewidth]{../img/initial-tree.png}
     \caption{Initial classification tree.}
     \end{figure}
 \item Now we can iterate this process using equivalence queries and enlarging the tree. But before we can do that we need how to transform a classification tree into a hypothesis DFA and how to make progress on the tree given a new counterexample. 
@@ -198,7 +198,7 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
     \end{definition}
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.1\linewidth]{img/sift-tree.png}
+    \includegraphics[width=0.1\linewidth]{../img/sift-tree.png}
     \caption{Sift operation.}
     \end{figure}
     \begin{remark}~
@@ -214,7 +214,7 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
     \item To obtain the transitions between states we use the sift operation. For example, the state corresponding to the leaf $s_i$ is connected to $\mr{sift}(T, s_i0)$ and  $\mr{sift}(T, s_i1)$.
         \begin{figure}[H]
         \centering
-        \includegraphics[width=0.2\linewidth]{img/transitions.png}
+        \includegraphics[width=0.2\linewidth]{../img/transitions.png}
         \caption{Transitions between states of $\widehat M$.}
         \end{figure}
     \end{itemize}
@@ -228,13 +228,13 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
     \item Follow $\gamma$ under $\widehat{M}$ and $M$ and see where they diverge. 
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/split-criterion.png}
+    \includegraphics[width=0.3\linewidth]{../img/split-criterion.png}
     \caption{Split criterion for leaves.}
     \end{figure} 
     Since they diverge, at some point we must end up  in different equivalence classes which implies that on the step immediately before that we have two different states on the same partition piece. In the figure above, this happens after following $\gamma_1\gamma_2$. Thus, the string $\gamma_1\gamma_2$ reaches a \emph{new state} that used to be in the same equivalence class as $S_3$. We can use this to split the leaf $S_3$.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/leaf-split.png}
+    \includegraphics[width=0.3\linewidth]{../img/leaf-split.png}
     \caption{Splitting a leaf.}
     \end{figure}       
     where $d_{AB}$ is the distinguishing string of the least common ancestor of the leafs $A$ and $B$, which are also leaves of our tree.
@@ -245,7 +245,7 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
 \subsection{PAC-learning ``Solar System''}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1\linewidth]{img/pac-solar-system.jpg}
+\includegraphics[width=1\linewidth]{../img/pac-solar-system.jpg}
 \end{figure} 
 
 \end{document}

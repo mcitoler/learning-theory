@@ -102,7 +102,7 @@ Now we turn our attention to learning with noise. The set up is the same as in t
 \end{itemize}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/noise-pac.png}
+\includegraphics[width=0.6\linewidth]{../img/noise-pac.png}
 \caption{PAC-learning with noise.}
 \end{figure}
 
@@ -127,7 +127,7 @@ Same setup as before but with a slight change.
 The general theory still applies and by minimizing observed error we can still pick up a target with error at most $\eta$. However, the ``malicious'' problem is considerably worse and we can no longer ask for $Err << \eta$. To see this consider a fixed distribution $D$ over X and two concepts $c_1, c_2 \in \mc C$ such that $c_1 \triangle c_2$ has $\ve$ weight under $D$. \\
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/malicious.png}
+\includegraphics[width=0.3\linewidth]{../img/malicious.png}
 \caption{Malicious noise.}
 \end{figure}
 Then, as long as $\eta \geq \frac \ve{1+\ve}$, the adversary can make you confuse $c_1$ and $c_2$. 
@@ -185,7 +185,7 @@ E.g. $\chi(\vec x, y) = 1 \iff x_{11}=0$ \& $y=1$ [$p_{01}(x_{11})$]
 On query $\chi$, $SQ(c,D)$ returns any value $\hat P_\chi  \in \left[P_\chi -\tau, P_\chi +\tau\right]$. To say that $\mc C$ is \emph{SQ-learnable} if  we require $\tau \geq poly\left(\frac\ve n\right)$
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/sq-learning.png}
+\includegraphics[width=0.6\linewidth]{../img/sq-learning.png}
 \caption{Statistical Query Learning.}
 \label{fig:graph}
 \end{figure}

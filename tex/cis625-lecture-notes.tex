@@ -107,9 +107,9 @@
 
 \maketitle
 
-These are notes from \href{http://www.cis.upenn.edu/~mkearns/}{Prof. Michael Kearns}'s CIS625. 
-This course is currently being taught at the University of Pennsylvania and attempts to provide algorithmic, complexity-theoretic and probabilistic foundations to modern machine learning and related topics.
- You can find out more at the \href{http://www.cis.upenn.edu/~mkearns/teaching/COLT/}{course website}. 
+These are notes from \href{http://www.cis.upenn.edu/~mkearns/}{Prof. Michael Kearns}'s CIS625.
+This course was taught at the University of Pennsylvania during the Fall of 2017. It provides algorithmic, complexity-theoretic and probabilistic foundations to modern machine learning and related topics.
+ You can find out more at the \href{http://www.cis.upenn.edu/~mkearns/teaching/COLT/}{course website}.
  A word of caution, it is likely that some typos and/or errors have been introduced during the taking of these notes. If you find any, please let me know at \href{mailto:martinci@math.upenn.edu}{martinci@math.upenn.edu}.
 
 \tableofcontents
@@ -130,7 +130,7 @@ This course is currently being taught at the University of Pennsylvania and atte
 	\item Criteria/objective of learning is.
 	\item Restrictions on algorithms.
 \end{itemize}
-	
+
 \subsubsection{Examples of Models}
 
 \begin{itemize}
@@ -145,30 +145,30 @@ This course is currently being taught at the University of Pennsylvania and atte
 
 \subsection{A Rectangle Learning Problem}
 
-Suppose you are trying to teach an alien friend the "shape" of humans in terms of abstract descriptions like "medium build", "athletic", etc. 
-We are going to assume that each one of these descriptions represents a rectangular region on the height-weight plane but we are not aware of the exact dimensions. 
+Suppose you are trying to teach an alien friend the "shape" of humans in terms of abstract descriptions like "medium build", "athletic", etc.
+We are going to assume that each one of these descriptions represents a rectangular region on the height-weight plane but we are not aware of the exact dimensions.
 The only thing we are able to tell the alien is whether a particular individual is medium built or not. i.e. we can only label examples.
 
 \begin{itemize}
 	\item \ul{target} rectangle $R$, the \emph{true} notion of "medium built".
-	\item \ul{hypothesis} rectangle $\hat R$. 
+	\item \ul{hypothesis} rectangle $\hat R$.
 \end{itemize}
 
 \begin{remark}
-	Note that the assumption that the classifier function is a rectangle is rather strong. 
-	There is always this trade-off to be able to actually compute things. 
+	Note that the assumption that the classifier function is a rectangle is rather strong.
+	There is always this trade-off to be able to actually compute things.
 	From a Bayesian point of view, ``we always need a prior''.
 \end{remark}
 
-Given a data cloud of examples, a reasonable hypothesis rectangle could be the tightest fit rectangle. 
-However, this choice ignores the negative examples so it seems that that we are throwing away information. 
+Given a data cloud of examples, a reasonable hypothesis rectangle could be the tightest fit rectangle.
+However, this choice ignores the negative examples so it seems that that we are throwing away information.
 In a sense, this rectangle would be the least likely.
 
 \begin{itemize}
 	\item Assume $\langle x_1,x_2 \rangle$ pairs of height-weight are i.i.d. from an arbitrary unknown probability distribution, $D$.
 \end{itemize}
 
-We want to be able to evaluate how our hypothesis rectangle is performing. 
+We want to be able to evaluate how our hypothesis rectangle is performing.
 We want bounds on the classification error, which can be thought as the size of the symmetric difference between $R$ and $\hat R$
 \begin{align}
 	D[R\triangle \hat R] \equiv \mb P_D[R(\vec x) \ne \hat R(\vec x)].
@@ -183,10 +183,10 @@ We want bounds on the classification error, which can be thought as the size of 
 \end{theorem}
 
 \begin{proof}
-	First of all, note that using tightest fit, the hypothesis rectangle is always contained inside the target rectangle. 
-	Now, for each side of the target rectangle we may draw inward strips in such a way that each strip has $\mb P_D[Strip] < \frac{\ve}{4}$. 
-	If the training set has a positive example in each of these four strips, then the inequality above is satisfied because the boundary of the hypothesis rectangle would be contained in the union of the strips. 
-	Next we need to deal with the required sample size to obtain this result with some certainty. 
+	First of all, note that using tightest fit, the hypothesis rectangle is always contained inside the target rectangle.
+	Now, for each side of the target rectangle we may draw inward strips in such a way that each strip has $\mb P_D[Strip] < \frac{\ve}{4}$.
+	If the training set has a positive example in each of these four strips, then the inequality above is satisfied because the boundary of the hypothesis rectangle would be contained in the union of the strips.
+	Next we need to deal with the required sample size to obtain this result with some certainty.
 	Let $m$ denote the sample size, since the distribution is i.i.d., we have
 	\begin{align*}
 		\mb P_D[\textrm{miss a specific strip m times}] = \left(1-\frac{\ve}{4}\right)^m,\\
@@ -196,12 +196,12 @@ We want bounds on the classification error, which can be thought as the size of 
 	\begin{align*}
 		\mb P_{D^m}[D[R\triangle\hat R]\geq \ve] \leq 4\left(1-\frac{\ve}{4}\right)^m,
 	\end{align*}
-	which can be chosen arbitrarily small for big enough $m$. 
+	which can be chosen arbitrarily small for big enough $m$.
 	One can obtain $N\geq \frac4\ve \ln\left(\frac4\delta\right)$.
 \end{proof}
 
 \begin{remark}
-	This proof generalizes to $d$-dimensional rectangles. 
+	This proof generalizes to $d$-dimensional rectangles.
 	We only need to replace 4 with $2d$, the number of $(d-1)$-faces.
 	We can also try to incorporate noisy data, where the labels have some probability of being wrong.
 \end{remark}
@@ -219,9 +219,9 @@ We want bounds on the classification error, which can be thought as the size of 
 \end{itemize}
 
 \begin{definition}[PAC Learning]
-	We say that a class of functions over $X$, $\mc C$, is \emph{Probably Approximately Correct (PAC) learnable} if there exists an algorithm, $L$, such that given any $c$ in $\mc C$, $D$ a distribution over $X$ and $\ve, \delta >0$, $L$ with these parameters and random inputs $\vec x$'s satisfies:  
+	We say that a class of functions over $X$, $\mc C$, is \emph{Probably Approximately Correct (PAC) learnable} if there exists an algorithm, $L$, such that given any $c$ in $\mc C$, $D$ a distribution over $X$ and $\ve, \delta >0$, $L$ with these parameters and random inputs $\vec x$'s satisfies:
 	\begin{itemize}
-		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc 
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc
 		C$ such that $D[h\triangle c]<\ve$, i. e.
 		\begin{align}
     		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
@@ -239,7 +239,7 @@ We want bounds on the classification error, which can be thought as the size of 
 \begin{remark}[PAC Learning]
     Fixing the class $\mc C$ is a strong assumption, it is the prior you are assuming about the true behavior of the data.
      For example, when you fit a linear regression, you are assuming that there is a true linear relation in the data.
-    
+
     In contrast, the assumption on the distribution over $X$ is fairly general.
 \end{remark}
 
@@ -279,8 +279,8 @@ Let $p_i$ denote the probability we delete $x_i$ from $h$ in a single draw. In o
     p_i = \mb P_{\bar X\sim D}[c(\vec x) = 1, x_i=0].
 \end{align}
 Then we have an a priori bound on error: $Err(h) \leq \sum\limits_{x_i\in h} p_i$.
- We can make a distinction between \emph{bad} and \emph{good} indices. 
- An index, $i$, is bad if $p_i\geq \frac{\ve}{n}$ and good otherwise. 
+ We can make a distinction between \emph{bad} and \emph{good} indices.
+ An index, $i$, is bad if $p_i\geq \frac{\ve}{n}$ and good otherwise.
  Note that if $h$ contains no bad indices, then we have
 \begin{align}
     Err(h) \leq \sum\limits_{x_i\in h} p_i \leq n\left(\frac{\ve}{n}\right).
@@ -291,7 +291,7 @@ Let's fix some index, $i$, such that $p_i\geq \frac\ve n$. i.e. a bad index. We 
     & \leq \left(1 - \frac\ve n\right)^m \\
     \mb P[\textrm{\emph{any} bad i "survives" m random samples}] &\leq n\left(1 - \frac\ve n\right)^m.
 \end{align}
-If we want the right-hand-side of the last inequality to be less than some $\delta>0$, we end up with $m \geq \frac n\ve \ln\left(\frac n\delta\right)$. 
+If we want the right-hand-side of the last inequality to be less than some $\delta>0$, we end up with $m \geq \frac n\ve \ln\left(\frac n\delta\right)$.
 In other words, we just proved the following theorem
 
 \begin{theorem}
@@ -299,20 +299,20 @@ In other words, we just proved the following theorem
 \end{theorem}
 
 \begin{remark}
-    An analogous argument proves this theorem for conjunctions that are not necessarily monotone. 
+    An analogous argument proves this theorem for conjunctions that are not necessarily monotone.
     The only difference is that we have to keep track the extra $\lnot$ variables.
 \end{remark}
 
 \begin{remark}
-    We can identify some pattern for this kind of analysis. 
+    We can identify some pattern for this kind of analysis.
     We identify some ``bad'' things that may happen and then prove that the probability of them happening decreases fast when we increase the number of samples seen.
 \end{remark}
 
 
 \subsection{Hardness of PAC learning 3-term DNF}
 
-Now we are going to see an example of non PAC learnable problem. 
-However, we will be able to slightly modify it and achieve PAC learning. 
+Now we are going to see an example of non PAC learnable problem.
+However, we will be able to slightly modify it and achieve PAC learning.
 This motivates an better definition of PAC learnable.
 \begin{itemize}
     \item Input space $X = \lbrace 0, 1 \rbrace^n$
@@ -320,23 +320,23 @@ This motivates an better definition of PAC learnable.
           E.g.: If $c = T_1 \lor T_2 \lor T_3$ where $T_i$ is a conjunction over $X$.\\
           $c = \left(x_1 \wedge x_7 \wedge \lnot x_8 \right) \lor \left(x_2 \wedge x_5 \wedge \lnot x_7 \wedge \lnot x_8\right) \lor \left(x_6 \wedge x_{12}\right)$.
 \end{itemize}
-To see that this problem is \emph{hard}, we prove that the graph 3-coloring problem reduces to the 3-term DNF problem. 
+To see that this problem is \emph{hard}, we prove that the graph 3-coloring problem reduces to the 3-term DNF problem.
 
 \subsubsection*{Graph 3-coloring to PAC learning 3-term DNF}
 
-Suppose that you have a 3-colorable (undirected) graph $G$. 
-That is, a graph such that we can color the vertices with 3 colors in such a way that there are no edges between vertices of the same color. 
-We see an example of how to transform such a graph into a set of labeled examples for the PAC learning 3-term DNF. 
+Suppose that you have a 3-colorable (undirected) graph $G$.
+That is, a graph such that we can color the vertices with 3 colors in such a way that there are no edges between vertices of the same color.
+We see an example of how to transform such a graph into a set of labeled examples for the PAC learning 3-term DNF.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/graph}
+\includegraphics[width=0.3\linewidth]{../img/graph}
 \caption{A graph with a 3-coloring.}
 \label{fig:graph}
 \end{figure}
 First, for the $i$-th node we create a positive example that is represented by the vector, $v(i)$, with a 0 in the $i$-th entry and 1's everywhere else. E.g. from node one we have $\langle 011111, + \rangle$.
-Then we create a negative example from each edge that is represented by a vector, $e(i,j)$, of 1's except for 0's at the positions that determine the edge. 
+Then we create a negative example from each edge that is represented by a vector, $e(i,j)$, of 1's except for 0's at the positions that determine the edge.
 E.g. from the edge connecting 2 and 3 we obtain $\langle 100111, - \rangle$.
-Next, the coloring can be used to define a 3-term DNF in the following way. 
+Next, the coloring can be used to define a 3-term DNF in the following way.
 Given a color, we define $T_{color}$ as the conjunction of the variables/vertices that are \emph{not} of that color. In this example we have
 \begin{align}
     T_R = x_2 \wedge x_3 \wedge x_4 \wedge x_5,\\
@@ -348,28 +348,28 @@ Given a color, we define $T_{color}$ as the conjunction of the variables/vertice
     $G$ is 3-colorable $\iff$ there is a 3-term DNF \emph{consistent} with the labeled sample above.
 \end{claim}
 \begin{proof}
-    We have just seen how to obtain a 3-term DNF from a 3-colorable graph. We only need to check that it is consistent with the sample. 
-    By construction, all the positive examples satisfy $T_{color}$ where color is the vertex's color, since the only 0 in the vector is in the position that is dropped. 
-    Similarly, it follows that the examples coming from the edges do not satisfy any of the $T$'s. In any edge there are two colors corresponding to its vertices. 
+    We have just seen how to obtain a 3-term DNF from a 3-colorable graph. We only need to check that it is consistent with the sample.
+    By construction, all the positive examples satisfy $T_{color}$ where color is the vertex's color, since the only 0 in the vector is in the position that is dropped.
+    Similarly, it follows that the examples coming from the edges do not satisfy any of the $T$'s. In any edge there are two colors corresponding to its vertices.
     The extra 0 in the example ensures that the $T$'s from those colors are not satisfied.
     Finally, the $T$ of the remaining color cannot be satisfied because both vertices are included in the conjunction and they are both 0 in the example.
-    
-    Conversely, given a graph and the labeled examples as above, if there is a consistent 3-term DNF we can find a coloring in the following way. 
-    Label each term of the formula with a color, say $T_R \lor T_Y \lor T_B$, and remember the order of the labels. 
-    Then, we define the color of vertex $i$ (corresponding to vector $1\ldots101\ldots1$) as the label of the first formula that is satisfied by $v(i)$. 
-    Since the formula is consistent with the sample, every vertex must be actually colored. We only need to argue that this is a valid coloring. 
-    Suppose to the contrary that $i$ and $j$ are to vertices that are connected by an edge and have the same color. 
-    This means that both $v(i)$ and $v(j)$ satisfy $T_{C_0}$. 
+
+    Conversely, given a graph and the labeled examples as above, if there is a consistent 3-term DNF we can find a coloring in the following way.
+    Label each term of the formula with a color, say $T_R \lor T_Y \lor T_B$, and remember the order of the labels.
+    Then, we define the color of vertex $i$ (corresponding to vector $1\ldots101\ldots1$) as the label of the first formula that is satisfied by $v(i)$.
+    Since the formula is consistent with the sample, every vertex must be actually colored. We only need to argue that this is a valid coloring.
+    Suppose to the contrary that $i$ and $j$ are to vertices that are connected by an edge and have the same color.
+    This means that both $v(i)$ and $v(j)$ satisfy $T_{C_0}$.
     However, we also have $v(i) \& v(j) = e(i,j)$  where $\&$ denotes the bit-wise and operation and it follows that $e(i,j)$ satisfies $T_{C_0}$, a contradiction with the consistency of the formula since edges are negative examples.
 \end{proof}
 
-This concludes the argument that finding a coloring of a graph is the same as producing a consistent 3-term DNF. 
+This concludes the argument that finding a coloring of a graph is the same as producing a consistent 3-term DNF.
 We are only left with the computational aspects.
-Namely, given the labeled sample associated to a graph, we need to find a way to feed it to a PAC learning algorithm. 
+Namely, given the labeled sample associated to a graph, we need to find a way to feed it to a PAC learning algorithm.
 First we need a distribution over vectors of bits.
-For this we can just sample the examples uniformly. 
+For this we can just sample the examples uniformly.
 Finally, to ensure consistency we choose $\ve$ any quantity less than $\frac1{\#examples}$\footnote{This epsilon is allowed because $\frac1\ve$ is polynomial in the size of input. This is not true in general.}. This way the algorithm cannot make any mistakes is forced to be consistent. The $\delta$ can be arbitrary.
-In conclusion, if the 3-term DNF problem were PAC learnable, we could solve the coloring problem in random polynomial time. 
+In conclusion, if the 3-term DNF problem were PAC learnable, we could solve the coloring problem in random polynomial time.
 Another way to say this is in the form of the following theorem.
 \begin{theorem}
     If 3-term DNF are PAC learnable, then $NP = RP$.
@@ -393,9 +393,9 @@ Recall the definition of a class being PAC learnable.
 	A class $\mc C$ is \emph{Probably Approximately Correct (PAC) learnable} if there exists an algorithm, $L$, such that:
 	\begin{align}
     	\forall c \in \mc C,\quad \forall D \textrm{ over }X,\quad \forall \ve,\delta > 0
-	\end{align} 
+	\end{align}
 	\begin{itemize}
-		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc 
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $h$ in $\mc
 		C$ such that $D[h\triangle c]<\ve$, i.e. we have error at most $\ve$
 		\begin{align}
     		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
@@ -420,8 +420,8 @@ Given a 3-DNF, we can rewrite it as a 3-CNF in the following way:
 \end{align}
 for every assignment of $x_1,\ldots,x_n$, both sides evaluate to the same boolean value. Notice that the length of the 3-CNF can be much bigger (but still polynomial): 3-DNF is at most as $3n$ but 3-CNF could be up to $n^3$. In a sense, this corresponds to feature generation.
 \begin{remark}
-    Notice that the reverse is NOT true. Given a 3-CNF it might not be representable as a 3-DNF. 
-    
+    Notice that the reverse is NOT true. Given a 3-CNF it might not be representable as a 3-DNF.
+
     Another important point to notice is that after the transformation into 3-CNF we are changing the distribution of the initial input space. But the definition of PAC learnable allows for \emph{any} distribution, so we are fine.
 \end{remark}
 
@@ -436,9 +436,9 @@ This motivates the more general definition for PAC-learnable that takes into acc
 	A class $\mc C$ is \emph{Probably Approximately Correct (PAC) learnable} by $\mc C \subset \mc H$ if there exists an algorithm, $L$, such that:
 	\begin{align}
     	\forall c \in \mc C,\quad \forall D \textrm{ over }X,\quad \forall \ve,\delta > 0
-	\end{align} 
+	\end{align}
 	\begin{itemize}
-		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $\ul{h\in\mc H}$ 
+		\item (Learning) With probability $\geq 1 -\delta$, $L$ outputs a hypothesis, $\ul{h\in\mc H}$
 		 such that $D[h\triangle c]<\ve$, i.e. we have error at most $\ve$
 		\begin{align}
     		Err(h) \coloneqq \mb P_{x\sim D}[h(x) \ne c(x)] \leq \ve.
@@ -486,9 +486,9 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
         If the inclusion above is saturated then it means that our hypothesis can classify ANY labeling of that size. That is bad for learning because it is saying that there is no structure in the data.
     \end{remark}
     \begin{remark}
-        For each variable in $S$, say $x_i$, it induces a partition on the class $\mc H$ according on what is the value of $h(x_i)$ for $h \in \mc H$. Then, one can think about $\Pi_{\mc H}(S)$ as the collection of all the the possible labelings with concepts in the class $\mc H$. 
+        For each variable in $S$, say $x_i$, it induces a partition on the class $\mc H$ according on what is the value of $h(x_i)$ for $h \in \mc H$. Then, one can think about $\Pi_{\mc H}(S)$ as the collection of all the the possible labelings with concepts in the class $\mc H$.
     \end{remark}
-\end{itemize}    
+\end{itemize}
 \begin{definition}
     We say that \emph{$S$ is shattered} if the the equality case holds, $\Pi_{\mc H}(S) = \lbrace 0, 1\rbrace^m$, or equivalently, $\abs{\Pi_{\mc H}(S)} = 2^m$.
 \end{definition}
@@ -502,8 +502,8 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
 
 \begin{example}
     If $\mc H$ is finite, then $VCD(\mc C)\leq \ln\abs{\mc C}$ because shattered $d$ points requires $2^d$ functions. Equivalently, if $VCD(\mc C) = d$, then we must have $\abs{\mc C} \geq 2^d$.
-\end{example} 
-    
+\end{example}
+
 \begin{example}[Rectangles in $\R^2$]
     The VCD dimension is $4$ in this case because the rectangular convex hull of a set of points is always given by the four extremal points in each direction. So there are always impossible labelings with 5 points. In general, the same kind of argument shows that the VCD dimension is $2d$.
 \end{example}
@@ -518,7 +518,7 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
     It is clear that the VCD is at least 3 because given three points, we can always choose a line that separates the points in any way we want. In fact, the VCD is exactly 3.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/hyperplanes.png}
+    \includegraphics[width=0.3\linewidth]{../img/hyperplanes.png}
     \end{figure}
     In general, for hyperplanes in $\R^d$ the VCD dimension is $d+1$.
 \end{example}
@@ -527,7 +527,7 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
     In this case, $VCD = 2n+1$. For example, if $n=4$, $VCD = 9$.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/4-gons.png}
+    \includegraphics[width=0.3\linewidth]{../img/4-gons.png}
     \end{figure}
 \end{example}
 
@@ -547,9 +547,9 @@ Next we want to deal with the case of a possibly infinite hypothesis class $\mc 
 Note that we have the following:
 \begin{itemize}
     \item  $\Pi_{\mc C}(m)\leq 2^m$.
-    \item If $m\leq VCD(\mc C)$, $\Pi_{\mc C}(m)=2^m$. 
+    \item If $m\leq VCD(\mc C)$, $\Pi_{\mc C}(m)=2^m$.
     \item If  $m > VCD(\mc C)$, $\Pi_{\mc C}(m) < 2^m$.
-\end{itemize} 
+\end{itemize}
 
 \begin{theorem}\label{main thm lecture 4}
     Let $VCD(\mc C)=d$. Then $\Pi_{\mc C}(m) = O(m^d)$.
@@ -689,13 +689,13 @@ The converse of the theorem above is not true, in other words, we can find distr
 \end{theorem}
 \begin{proof}
     Consider $\lbrace x_1,\ldots,x_d\rbrace$ a shattered set and let $D$ be the uniform distribution over this set. Now, since the set is shattered, we can choose a function $c_i\in \mc C$ with $i=1,\ldots,2^d$  for each of the possible labeling of these d points. Now we randomly choose the target concept, $c$, among these $c_i$. This is equivalent to flipping a fair coin d times to determine the labeling induced by $c$ on $S$.
-    
+
     Now we let $L$ be any $PAC$ learning algorithm with the data above. Given error parameter $\ve \leq \frac18$ suppose we only draw $m < d$ examples. Say that the number of distinct points that we have seen is $m' \leq m$,  for the remaining of the points the problem is equivalent to predicting a fair coin toss. Therefore, the expected error on the whole sample is $\frac{\frac{d-m'}2}d = \frac{d-m'}{2d}.$ By \href{https://en.wikipedia.org/wiki/Markov's_inequality}{Chebyshev's inequality},
     \begin{align}
         \mb P\left(Error\geq \frac{d-m'}{4d}\right) \leq \frac12.
     \end{align}
     In particular, if $m=\frac d2$, the error is at least $\frac 18$ with probability at least $\frac 12$ and the algorithm fails the conclusion of the theorem when $c$ is chosen randomly. This implies that there exist some target $c$ on which $L$ fails, so we need at least $\Omega(d)$ sample complexity lower bound.
-    
+
     Finally, to incorporate the $\ve$ onto the lower bound, we need only scale the distribution above. Modify $D$ so that  the point $x_1$ has  probability $1-8\ve$ and let the rest have probability $\frac{8\ve}{d-1}$. This results in needing to draw more points to be in the same set up as before. Details are left as exercise or can be checked on the textbook in page 63.
 \end{proof}
 \subsection{VC++}
@@ -704,7 +704,7 @@ So far we have assumed that the the target $c\in\mc C$. That is, that the truth 
 \begin{definition}
     $h^*\coloneqq \mathop{argmin}\limits_{h\in\mc H}\left\{Err(h)\right\}$, where $Err(h) = \mb P_{X\sim D}[h(x)\ne c(x)]$. We also define $\ve^* = Err(h^8)=$ best possible error in $\mc H.$
 \end{definition}
-Let's set up some additional notation. Given $h\in \mc H$ and a labeled sample 
+Let's set up some additional notation. Given $h\in \mc H$ and a labeled sample
 \begin{align}
     S=\lbrace \langle x_1, c(x_1)\rangle,\ldots,\langle x_m, c(x_m)\rangle\rbrace,
 \end{align}
@@ -784,7 +784,7 @@ Now we turn our attention to learning with noise. The set up is the same as in t
 \end{itemize}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/noise-pac.png}
+\includegraphics[width=0.6\linewidth]{../img/noise-pac.png}
 \caption{PAC-learning with noise.}
 \end{figure}
 
@@ -794,7 +794,7 @@ Given any $h\in \mc H$, we can compute the noisy error
 \end{align}
 observe that since we have $\eta < \frac12$, this is increasing as a function $Err(h)$. This means that noise preserves the ranking of hypothesis according to their error. So we can still minimize this quantity and obtain a good model.
 \begin{remark}
-As a consequence, all the VCD results still hold with the only caveat that we need more data, in particular, we need 
+As a consequence, all the VCD results still hold with the only caveat that we need more data, in particular, we need
 \begin{align}
 m \sim \frac{VCD(\mc C)}{\ve^2(1-2\eta)^2}\log\left(\frac1\delta\right).
 \end{align}
@@ -809,10 +809,10 @@ Same setup as before but with a slight change.
 The general theory still applies and by minimizing observed error we can still pick up a target with error at most $\eta$. However, the ``malicious'' problem is considerably worse and we can no longer ask for $Err << \eta$. To see this consider a fixed distribution $D$ over X and two concepts $c_1, c_2 \in \mc C$ such that $c_1 \triangle c_2$ has $\ve$ weight under $D$. \\
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/malicious.png}
+\includegraphics[width=0.3\linewidth]{../img/malicious.png}
 \caption{Malicious noise.}
 \end{figure}
-Then, as long as $\eta \geq \frac \ve{1+\ve}$, the adversary can make you confuse $c_1$ and $c_2$. 
+Then, as long as $\eta \geq \frac \ve{1+\ve}$, the adversary can make you confuse $c_1$ and $c_2$.
 
 \subsection{Learning (monotone) Conjunctions with ``Statistics''}
 Recall the problem of learning conjunctions.
@@ -867,7 +867,7 @@ E.g. $\chi(\vec x, y) = 1 \iff x_{11}=0$ \& $y=1$ [$p_{01}(x_{11})$]
 On query $\chi$, $SQ(c,D)$ returns any value $\hat P_\chi  \in \left[P_\chi -\tau, P_\chi +\tau\right]$. To say that $\mc C$ is \emph{SQ-learnable} if  we require $\tau \geq poly\left(\frac\ve n\right)$
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/sq-learning.png}
+\includegraphics[width=0.6\linewidth]{../img/sq-learning.png}
 \caption{Statistical Query Learning.}
 \label{fig:graph}
 \end{figure}
@@ -963,10 +963,10 @@ Parity functions satisfy the following:
 Let $D$ be uniform over $X$.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/parity.jpg}
+\includegraphics[width=0.6\linewidth]{../img/parity.jpg}
 \caption{Parity functions.}
 \end{figure}
-If we flip coins to decide the bits, by the time we reach the last one, T is completely determined but S relies on the result completely. 
+If we flip coins to decide the bits, by the time we reach the last one, T is completely determined but S relies on the result completely.
 \begin{align}
 \forall S\ne T,\quad\mb P[f_S(\vec x) = f_T(\vec x)] = \frac 12 = \mb P[f_S(\vec x) \ne f_T(\vec x)]
 \end{align}
@@ -998,13 +998,13 @@ Recall some of the PAC-learnable classes of functions we have seen.
 \item decisions lists (problem in the book)
 \item 3-term DNF by 3CNF.
 \end{itemize}
-The problem is that none of the are "universal" in the sense that they cannot represent all the boolean functions. In contrast, 
+The problem is that none of the are "universal" in the sense that they cannot represent all the boolean functions. In contrast,
 \paragraph{general DNF functions:} Expressions of the form $T_1\lor\ldots\lor T_m$ where each $T_i$ is a conjunction over $x_1,\ldots,x_n,\lnot x_1,\ldots,\lnot x_n$. Now, any boolean function can be represented as a look-up table. Since we can add a $T_i$ for each of the entries of this table, they all can be represented by general DNF.
 
 \paragraph{decision trees:}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/tree}
+\includegraphics[width=0.6\linewidth]{../img/tree}
 \caption{Decision tree.}
 \end{figure}
 As before, we can copy the look-up table with a big enough table.
@@ -1022,7 +1022,7 @@ Recall that we saw that PAC-learning 3-term DNF by 3-term DNF is hard assuming R
 If we allow \emph{any} hypothesis class we can always produce hypotheses that perform exhaustive search on the target class $\mc C$ until they find a consistent class with the sample. Then, everything is PAC learnable. We want to forbid these shenanigans.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac.jpg}
+\includegraphics[width=0.6\linewidth]{../img/pac.jpg}
 \caption{Overpowered hypotheses.}
 \end{figure}
 
@@ -1035,7 +1035,7 @@ If we allow \emph{any} hypothesis class we can always produce hypotheses that pe
 \item Alice wants to encrypt her message.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/crypto.jpg}
+\includegraphics[width=0.6\linewidth]{../img/crypto.jpg}
 \caption{Cryptography layout.}
 \end{figure}
 \end{itemize}
@@ -1098,7 +1098,7 @@ Even if we only  ask for $\ve < \frac12$, e.g. $\ve = \frac12 - \frac1{poly(n, s
 Recall the PAC-learning scheme:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-learning.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-learning.png}
 \caption{Scheme for PAC learning.}
 \end{figure}
 
@@ -1123,7 +1123,7 @@ which is less than any chosen $\delta$ if k is big enough. It is enough to pick 
 Given algorithm $L$ such that for any distribution, w.p $\geq 1-\delta$, outputs h such that $Err(h) \leq \ve_0 = \frac12 - \gamma$ (i.e. slightly better than random guessing) (weak learning algorithm). One my try a similar thing as above but with taking a majority vote:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/majority.png}
+\includegraphics[width=0.6\linewidth]{../img/majority.png}
 \caption{Majority vote.}
 \end{figure}
 The problem is that $L$ could be evil and always output the same hypothesis. The key idea is to create filtered distributions to force $L$ to learn something ``new''.
@@ -1135,7 +1135,7 @@ The problem is that $L$ could be evil and always output the same hypothesis. The
 \begin{itemize}
 \item Flip a fair coin.
 \item If heads, sample $x\sim D_1$ until $h_1(x)\ne c(x)$.
-\item If tails, sample until $h_1(x) = c(x)$. 
+\item If tails, sample until $h_1(x) = c(x)$.
 \end{itemize}
 \begin{remark}
 Note that if these conditions are not met for a lot of samples, then either $h_1$ or $\lnot h_1$ are already good enough hypothesis. This guarantees that $L$ cannot output $h_1$ or its negation as hypothesis because they would have error 50/50.
@@ -1143,7 +1143,7 @@ Note that if these conditions are not met for a lot of samples, then either $h_1
 Algebraically, this corresponds to modifying the weights of the original distribution, see the picture below.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/weights.png}
+\includegraphics[width=0.6\linewidth]{../img/weights.png}
 \caption{Modify weights of original distribution.}
 \end{figure}
 Then we run $L$ on $EX(c,D_2)$ to get some $h_2\ne h_1$ such that $Err_{D_2}(h_2)\leq \ve_0$.
@@ -1160,13 +1160,13 @@ $Err_{D_1}(h) \leq 3\ve_0^2 - 2\ve_0^3$.
 \begin{remark}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/boosting-bound.png}
+\includegraphics[width=0.3\linewidth]{../img/boosting-bound.png}
 \caption{$3x^2 - 2x^3$.}
 \end{figure}
 Note that it is a convex function below the line $\lbrace y = x\rbrace$. So we gain a little bit by boosting. Then we can iterate to obtain an arbitrary boosting.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/boosting-iteration.png}
+\includegraphics[width=0.3\linewidth]{../img/boosting-iteration.png}
 \caption{Boosting iterations.}
 \end{figure}
 Also note that the number of iterations needed to obtain error $\leq \ve$ is $\sim \log\log\frac1\ve$.
@@ -1176,7 +1176,7 @@ Also note that the number of iterations needed to obtain error $\leq \ve$ is $\s
 We are actually changing the hypothesis space in the final algorithm. We output a ternary tree of majority hypotheses
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/majority-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/majority-tree.png}
 \caption{Majority tree.}
 \end{figure}
 
@@ -1263,7 +1263,7 @@ Adaboost provides a sort of converse to the following result: ``hypothesis compr
 In essence, it is PAC-learning with a membership query oracle. This gives the algorithm to create ``synthetic'' examples and ask for the true labels. This assumes that there is an underlying ground truth, which might not be true in practice.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-mq.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-mq.png}
 \caption{PAC with membership queries.}
 \end{figure}
 \begin{remark}
@@ -1273,7 +1273,7 @@ On the surface, adding these membership queries are adding some power to the alg
 Now consider the following learning model where we have membership queries of individual inputs and an equivalence query oracle that answers whether an hypothesis is the same as the target class (as functions), $c$, and gives \emph{some} counterexample if appropriate i.e. some input where they disagree.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-mq-eq.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-mq-eq.png}
 \caption{Exact learning with membership and equivalence queries.}
 \end{figure}
 
@@ -1290,7 +1290,7 @@ First of all, recall that PAC-learning DFAs\footnote{Deterministic Finite Automa
 Consider $X=\lbrace 0, 1\rbrace^*$ with labels $\lbrace +, -\rbrace$. i.e. arbitrary length strings of 1s and 0s. The goal is to learn in poly(size(c), longest counterexample).
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/dfa.png}
+\includegraphics[width=0.6\linewidth]{../img/dfa.png}
 \caption{Example of DFA.}
 \end{figure}
 This function is actually $M(x) = +$ if and only if the \#1s in $x$ is $\equiv 3 \mod 4$.
@@ -1300,7 +1300,7 @@ This function is actually $M(x) = +$ if and only if the \#1s in $x$ is $\equiv 3
 To be able to learn DFAs we use a binary tree satisfying the following properties.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/dfa-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/dfa-tree.png}
 \caption{Classification tree.}
 \end{figure}
 \begin{itemize}
@@ -1316,26 +1316,26 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/dfa-to-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/dfa-to-tree.png}
 \caption{Classification tree for the example above.}
 \end{figure}
 
 \subsubsection*{Learning Model}
 \begin{enumerate}
 \item MQ on $\lambda$ to get the start state of $\lambda$ i.e. what is the label of the start state, say $+$.
-\item EQ on the trivial machine: 
+\item EQ on the trivial machine:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.1\linewidth]{img/trivial-dfa.png}
+\includegraphics[width=0.1\linewidth]{../img/trivial-dfa.png}
 \caption{Trivial DFA.}
 \end{figure}
     If the machine is not trivial, we obtain a counterexample string, $\langle s, -\rangle$, and we can initialize the tree.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.1\linewidth]{img/initial-tree.png}
+    \includegraphics[width=0.1\linewidth]{../img/initial-tree.png}
     \caption{Initial classification tree.}
     \end{figure}
-\item Now we can iterate this process using equivalence queries and enlarging the tree. But before we can do that we need how to transform a classification tree into a hypothesis DFA and how to make progress on the tree given a new counterexample. 
+\item Now we can iterate this process using equivalence queries and enlarging the tree. But before we can do that we need how to transform a classification tree into a hypothesis DFA and how to make progress on the tree given a new counterexample.
     \begin{definition}[Sift operation]
     Given a classification tree, $T$, and a string of 1s and 0s, $s$, we define the sift of $s$ by $T$, $\mr{sift}(T,s)$, as the leaf that is reached by the string $s$ in the following way. At each node, we follow the string $s$ and then the string of the node $d_i$ in the true DFA machine and depending on the label of the state we reach, we go left/right down the tree. In the learning model we can actually do this using membership queries. For example:
     \begin{itemize}
@@ -1346,7 +1346,7 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
     \end{definition}
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.1\linewidth]{img/sift-tree.png}
+    \includegraphics[width=0.1\linewidth]{../img/sift-tree.png}
     \caption{Sift operation.}
     \end{figure}
     \begin{remark}~
@@ -1355,36 +1355,36 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
     \item Strings that reach the same state o the true machine must sift to the same leaf. This is because of the properties of the tree mentioned above.
     \end{enumerate}
     \end{remark}
-    
+
     \paragraph{From a tree to a hypothesis machine $\widehat M$.}
     \begin{itemize}
     \item For each leaf of the tree we have a state of the machine.
     \item To obtain the transitions between states we use the sift operation. For example, the state corresponding to the leaf $s_i$ is connected to $\mr{sift}(T, s_i0)$ and  $\mr{sift}(T, s_i1)$.
         \begin{figure}[H]
         \centering
-        \includegraphics[width=0.2\linewidth]{img/transitions.png}
+        \includegraphics[width=0.2\linewidth]{../img/transitions.png}
         \caption{Transitions between states of $\widehat M$.}
         \end{figure}
     \end{itemize}
-    
+
     \paragraph{Making progress on the classification tree.}~\\
     Once we have $\widehat{M}$ we can EQ and either be done or produce a counterexample. Suppose that the equivalence query on $\widehat{M}$ produces the counterexample $\gamma = \gamma_1\gamma_2\ldots\gamma_m$ where $\gamma_l\in\lbrace 0, 1\rbrace$. For simplicity assume that $\gamma$ is $+$ in the true machine $M$ and $-$ in $\widehat{M}$. We use $\gamma$ to improve the classification tree.
     \begin{itemize}
     \item As observed above, our current tree induces a partition of the space of strings, $\lbrace 0, 1\rbrace^*$, and, equivalently, on the states of the machine $M$.
     \item Each of the partition pieces corresponds to one of the current leaves.
     \item We can assume that $S_1 = \lambda$, i.e. that the first leaf tracks the start state of the machine.
-    \item Follow $\gamma$ under $\widehat{M}$ and $M$ and see where they diverge. 
+    \item Follow $\gamma$ under $\widehat{M}$ and $M$ and see where they diverge.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/split-criterion.png}
+    \includegraphics[width=0.3\linewidth]{../img/split-criterion.png}
     \caption{Split criterion for leaves.}
-    \end{figure} 
+    \end{figure}
     Since they diverge, at some point we must end up  in different equivalence classes which implies that on the step immediately before that we have two different states on the same partition piece. In the figure above, this happens after following $\gamma_1\gamma_2$. Thus, the string $\gamma_1\gamma_2$ reaches a \emph{new state} that used to be in the same equivalence class as $S_3$. We can use this to split the leaf $S_3$.
     \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\linewidth]{img/leaf-split.png}
+    \includegraphics[width=0.3\linewidth]{../img/leaf-split.png}
     \caption{Splitting a leaf.}
-    \end{figure}       
+    \end{figure}
     where $d_{AB}$ is the distinguishing string of the least common ancestor of the leafs $A$ and $B$, which are also leaves of our tree.
     \end{itemize}
 \item The stopping condition is when we have as many leaves as the true machine has states.
@@ -1393,6 +1393,6 @@ To be able to learn DFAs we use a binary tree satisfying the following propertie
 \subsection{PAC-learning ``Solar System''}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1\linewidth]{img/pac-solar-system.jpg}
-\end{figure} 
+\includegraphics[width=1\linewidth]{../img/pac-solar-system.jpg}
+\end{figure}
 \end{document}

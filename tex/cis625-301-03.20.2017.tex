@@ -97,7 +97,7 @@
 Recall the PAC-learning scheme:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/pac-learning.png}
+\includegraphics[width=0.6\linewidth]{../img/pac-learning.png}
 \caption{Scheme for PAC learning.}
 \end{figure}
 
@@ -122,7 +122,7 @@ which is less than any chosen $\delta$ if k is big enough. It is enough to pick 
 Given algorithm $L$ such that for any distribution, w.p $\geq 1-\delta$, outputs h such that $Err(h) \leq \ve_0 = \frac12 - \gamma$ (i.e. slightly better than random guessing) (weak learning algorithm). One my try a similar thing as above but with taking a majority vote:
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/majority.png}
+\includegraphics[width=0.6\linewidth]{../img/majority.png}
 \caption{Majority vote.}
 \end{figure}
 The problem is that $L$ could be evil and always output the same hypothesis. The key idea is to create filtered distributions to force $L$ to learn something ``new''.
@@ -142,7 +142,7 @@ Note that if these conditions are not met for a lot of samples, then either $h_1
 Algebraically, this corresponds to modifying the weights of the original distribution, see the picture below.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\linewidth]{img/weights.png}
+\includegraphics[width=0.6\linewidth]{../img/weights.png}
 \caption{Modify weights of original distribution.}
 \end{figure}
 Then we run $L$ on $EX(c,D_2)$ to get some $h_2\ne h_1$ such that $Err_{D_2}(h_2)\leq \ve_0$.
@@ -159,13 +159,13 @@ $Err_{D_1}(h) \leq 3\ve_0^2 - 2\ve_0^3$.
 \begin{remark}
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/boosting-bound.png}
+\includegraphics[width=0.3\linewidth]{../img/boosting-bound.png}
 \caption{$3x^2 - 2x^3$.}
 \end{figure}
 Note that it is a convex function below the line $\lbrace y = x\rbrace$. So we gain a little bit by boosting. Then we can iterate to obtain an arbitrary boosting.
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/boosting-iteration.png}
+\includegraphics[width=0.3\linewidth]{../img/boosting-iteration.png}
 \caption{Boosting iterations.}
 \end{figure}
 Also note that the number of iterations needed to obtain error $\leq \ve$ is $\sim \log\log\frac1\ve$.
@@ -175,7 +175,7 @@ Also note that the number of iterations needed to obtain error $\leq \ve$ is $\s
 We are actually changing the hypothesis space in the final algorithm. We output a ternary tree of majority hypotheses
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.3\linewidth]{img/majority-tree.png}
+\includegraphics[width=0.3\linewidth]{../img/majority-tree.png}
 \caption{Majority tree.}
 \end{figure}
 
